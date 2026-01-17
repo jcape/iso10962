@@ -1,0 +1,12 @@
+{
+    "config": {
+        "line-length": false,
+        "no-duplicate-heading": {
+            "siblings_only": true
+        }
+    },
+    "gitignore": true,
+    "ignores": [
+        "CODE_OF_CONDUCT.md"
+    ]
+}
