@@ -1,0 +1,39 @@
+[workspace]
+resolver = "2"
+members = ["types"]
+exclude = [".cache"]
+
+[workspace.dependencies]
+yare = "3"
+
+[workspace.lints.clippy]
+cargo = "deny"
+complexity = "deny"
+pedantic = "deny"
+perf = "deny"
+style = "deny"
+
+[workspace.lints.rust]
+missing_debug_implementations = "deny"
+missing_docs = "deny"
+unreachable_pub = "deny"
+rust_2018_idioms = "deny"
+unsafe_code = "deny"
+
+[workspace.metadata.release]
+shared-version = true
+consolidate-commits = true
+tag-name = "v{{version}}"
+
+[workspace.package]
+authors = ["James Cape <jamescape777@gmail.com>"]
+edition = "2024"
+homepage = "https://github.com/jcape/iso10962"
+license = "Apache-2.0"
+readme = "README.md"
+repository = "https://github.com/jcape/iso10962"
+rust-version = "1.87.0"
+version = "0.0.1"
+
+[profile.release]
+lto = true
