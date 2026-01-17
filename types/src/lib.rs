@@ -102,6 +102,10 @@ impl Form {
     }
 
     /// Construct a new instance from the given byte value.
+    ///
+    /// # Errors
+    ///
+    /// - [`Error::InvalidByte`] if the give byte is not a valid form character.
     pub const fn from_byte(value: u8) -> Result<Self> {
         match value {
             b'B' => Ok(Self::Bearer),
