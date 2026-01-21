@@ -6,9 +6,9 @@
 
 This crate provides `no-std`, `no-alloc` compatible data structures for use handling ISO 10962 Classification of Financial Instruments. They are built as a series of nested Rust enumerations:
 
-- [`Code`] is the top-level enum of CFI categories
-  - [`equity::Group`] is a second-level enum of CFI groups for equities.
-    - [`equity::CommonAttributes`] is the collection of attributes associated with common stock, including:
+- [`Code`] is the top-level enum of CFI categories.
+  - [`equity::Equity`] is a second-level enum of CFI groups for equities.
+    - [`equity::Common`] is the collection of attributes associated with common stock, including:
       - [`equity::VotingRight`] describes the voting rights for stocks (and is an attribute of common shares)
       - [`equity::Ownership`] describes the ownership a given stock represents.
       - [`equity::PaymentStatus`] describes the payment status of a share.

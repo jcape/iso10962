@@ -18,21 +18,17 @@ rust-version.workspace = true
 version.workspace = true
 
 [features]
-default = ["alloc", "serde", "zerocopy"]
-alloc = ["serde?/alloc", "zerocopy?/alloc"]
+default = ["alloc", "serde"]
+alloc = ["serde?/alloc"]
 serde = ["dep:serde"]
-zerocopy = ["dep:zerocopy"]
 
 [dependencies]
+pastey = "0.2.1"
 serde = { version = "1.0", default-features = false, features = [
   "derive",
 ], optional = true }
 thiserror = { version = "2", default-features = false }
 yare.workspace = true
-zerocopy = { version = "0.8", default-features = false, features = [
-  "derive",
-  "simd",
-], optional = true }
 
 [dev-dependencies]
 serde_json = "1.0"

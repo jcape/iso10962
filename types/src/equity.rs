@@ -1,744 +1,587 @@
 //! Equities-category CFI details.
 
-use crate::Form;
+use crate::{Form, NotApplicable, macros};
 
-/// CFI Groups for Equities.
-#[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
-#[repr(u8)]
-pub enum Group {
-    /// Common/ordinary shares.
-    Common(CommonAttributes) = b'S',
-    /// Preferred shares
-    Preferred(PreferredAttributes) = b'P',
-    /// Convertible shares.
-    Convertible(ConvertibleAttributes) = b'C',
-    /// Preferred convertible shares.
-    PreferedConvertible(PreferredConvertibleAttributes) = b'F',
-    /// Limited partnership units.
-    LlpUnit(LlpAttributes) = b'L',
-    /// Depository receipts on equities.
-    DepositoryReceipt(ReceiptAttributes) = b'D',
-    /// Structured instruments (participation).
-    Structured(StructuredAttributes) = b'Y',
-    /// Preference shares.
-    Preference(PreferenceAttributes) = b'R',
-    /// Preference convertible shares.
-    PreferenceConvertible(PreferenceConvertibleAttributes) = b'V',
-    /// Units (from Unit trusts, Mutual funds, OPCVM or OICVM).
-    Unit(UnitAttributes) = b'U',
-    /// Others (misc).
-    Other(OtherAttributes) = b'M',
-}
+macros::impl_category! {
+    /// Financial instruments representing an ownership interest in an entity or pool of assets.
+    enum Equity {
+        /// `S`: Common/ordinary shares.
+        ///
+        /// Holders are typically entitled to vote and receive dividends. In the event of
+        /// liquidation, holders of shares usually rank behind the entity's creditors and holders
+        /// of preferred/preference shares.
+        Common(Common) = b'S',
 
-impl Group {
-    /// If the group is common/ordinary shares.
-    #[must_use]
-    pub const fn is_common(&self) -> bool {
-        matches!(self, Group::Common(_))
-    }
+        /// `P`: Preferred/preference shares.
+        ///
+        /// Payment of dividends to holders normally takes preference over the payment of dividends
+        /// to other classes of shares. In the event of liquidation, preferred/preference shares
+        /// normally rank above ordinary shares but behind creditors of the company.
+        Preferred(Preferred) = b'P',
 
-    /// If the group is preferred shares.
-    #[must_use]
-    pub const fn is_preferred(&self) -> bool {
-        matches!(self, Group::Preferred(_))
-    }
+        /// `C`: Common/ordinary convertible shares.
+        ///
+        /// Shares (common/ordinary) which, at the discretion of the holder, are convertible into
+        /// other securities, at a designated rate. The conversion privilege may be perpetual or
+        /// limited to a specific period.
+        Convertible(Convertible) = b'C',
 
-    /// If the group is convertible shares.
-    #[must_use]
-    pub const fn is_convertible(&self) -> bool {
-        matches!(self, Group::Convertible(_))
-    }
+        /// `F`: Preferred/preference convertible shares.
+        ///
+        /// Preferred/preference shares which, at the discretion of the holder, are convertible
+        /// into other securities, usually common/ordinary shares, at a designated rate. The
+        /// conversion privilege may be perpetual or limited to a specified period.
+        PreferedConvertible(PreferredConvertible) = b'F',
 
-    /// If the group is convertible shares.
-    #[must_use]
-    pub const fn is_prefered_convertible(&self) -> bool {
-        matches!(self, Group::PreferedConvertible(_))
-    }
+        /// `L`: Limited partnership units.
+        ///
+        /// A limited partnership is a form of partnership similar to a general partnership, except
+        /// that in addition to one or more general partners (GPs), there are one or more limited
+        /// partners (LPs).
+        ///
+        /// Like shareholders in a corporation, the LPs have limited liability, i.e. they are only
+        /// liable on debts incurred by the firm to the extent of their registered investment and
+        /// they have no management authority. The GPs pay the LPs the equivalent of a dividend on
+        /// their investment, the nature and extent of which is usually defined in the partnership
+        /// agreement.
+        LlpUnit(LlpUnit) = b'L',
 
-    /// If the group is a limited partnership unit.
-    #[must_use]
-    pub const fn is_llp_unit(&self) -> bool {
-        matches!(self, Group::LlpUnit(_))
-    }
+        /// `D`: Depository receipts on equities.
+        ///
+        /// Depository receipts are securities that facilitate the ownership of securities traded
+        /// in other jurisdictions. Depository receipts are widely used in order to allow the
+        /// trading of shares in jurisdictions other than the one where the original shares were
+        /// issued.
+        DepositoryReceipt(DepositoryReceipt) = b'D',
 
-    /// If the group is a depository receipt.
-    #[must_use]
-    pub const fn is_depository_receipt(&self) -> bool {
-        matches!(self, Group::DepositoryReceipt(_))
-    }
+        /// `Y`: Structured instruments (participation).
+        ///
+        /// The construction is generally based on a low exercise price option (LEPO) (base value
+        /// less discounted future dividends) which in some cases might be comparable to a direct
+        /// investment in the underlying asset(s) or a LEPO combined with other options, which
+        /// together provide the desired disbursement profile.
+        Structured(Structured) = b'Y',
 
-    /// If the group is a structured instrument (participation).
-    #[must_use]
-    pub const fn is_structured(&self) -> bool {
-        matches!(self, Group::Structured(_))
-    }
-
-    /// If the group is a preference share.
-    #[must_use]
-    pub const fn is_preference(&self) -> bool {
-        matches!(self, Group::Preference(_))
-    }
-
-    /// If the group is a preference share.
-    #[must_use]
-    pub const fn is_preference_convertible(&self) -> bool {
-        matches!(self, Group::PreferenceConvertible(_))
-    }
-
-    /// If the group is a unit (from a unit trust, mutual fund, OPCVM, or OICVM).
-    #[must_use]
-    pub const fn is_unit(&self) -> bool {
-        matches!(self, Group::Unit(_))
-    }
-
-    /// If the group is a miscellaneous share.
-    #[must_use]
-    pub const fn is_other(&self) -> bool {
-        matches!(self, Group::Other(_))
+        /// `M`: Others (miscelaneous).
+        Other(Other) = b'M',
     }
 }
 
-/// The attributes available to common equities.
-#[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
-#[cfg_attr(
-    feature = "zerocopy",
-    derive(
-        zerocopy::Immutable,
-        zerocopy::IntoBytes,
-        zerocopy::KnownLayout,
-        zerocopy::TryFromBytes,
-    )
-)]
-pub struct CommonAttributes {
-    /// Voting rights (`ES_XXX`).
-    pub voting_right: VotingRight,
-    /// Ownership (`ESX_XX`).
-    pub ownership: Ownership,
-    /// Payment status (`ESXX_X`).
-    pub payment_status: PaymentStatus,
-    /// The form of equity (ESXXX_).
-    pub form: Form,
+macros::impl_group! {
+    /// Attributes applicable to common stock.
+    ///
+    /// Holders are typically entitled to vote and receive dividends. In the event of liquidation,
+    /// holders of shares usually rank behind the entity's creditors and holders of
+    /// preferred/preference shares.
+    pub struct Common {
+        /// Voting.
+        ///
+        /// Each share has one vote.
+        pub voting_right: VotingRight, 1;
+
+        /// Ownership/transfer/sales restrictions.
+        ///
+        /// The ownership or transfer of the security is subject to special conditions including
+        /// country-specific restrictions.
+        pub ownership: Ownership, 2;
+
+        /// Payment status.
+        pub payment_status: PaymentStatus, 3;
+
+        /// Form (negotiability, transmission).
+        pub form: Form, 4;
+    }
 }
 
-/// The attributes available to preferred equities.
-#[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
-#[cfg_attr(
-    feature = "zerocopy",
-    derive(
-        zerocopy::Immutable,
-        zerocopy::IntoBytes,
-        zerocopy::KnownLayout,
-        zerocopy::TryFromBytes,
-    )
-)]
-pub struct PreferredAttributes {
-    /// Voting rights (`EP_XXX`).
-    pub voting_right: VotingRight,
-    /// Redemption (`EPX_XX`).
-    pub redemption: Redemption,
-    /// Income (`EPXX_X`).
-    pub income: Income,
-    /// The form of share (EPXXX_).
-    pub form: Form,
+macros::impl_group! {
+    /// Attributes applicable to prefered shares.
+    ///
+    /// Payment of dividends to holders normally takes preference over the payment of dividends to
+    /// other classes of shares. In the event of liquidation, preferred/preference shares normally
+    /// rank above ordinary shares but behind creditors of the company.
+    pub struct Preferred {
+        /// Voting right.
+        ///
+        /// Indicates the kind of voting power conferred to the shareholder.
+        pub voting_right: VotingRight, 1;
+
+        /// Redemption.
+        ///
+        /// Indicates the retirement provisions made for the shares.
+        pub redemption: Redemption, 2;
+
+        /// Income.
+        ///
+        /// Indicates the kind of dividend income the shareholders are entitled to.
+        pub income: Income, 3;
+
+        /// Form (negotiability, transmission).
+        pub form: Form, 4;
+    }
 }
 
-/// The attributes available to convertible equities.
-#[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
-#[cfg_attr(
-    feature = "zerocopy",
-    derive(
-        zerocopy::Immutable,
-        zerocopy::IntoBytes,
-        zerocopy::KnownLayout,
-        zerocopy::TryFromBytes,
-    )
-)]
-pub struct ConvertibleAttributes {
-    /// Voting rights (`EC_XXX`).
-    pub voting_right: VotingRight,
-    /// Ownership (`ECX_XXX`).
-    pub ownership: Ownership,
-    /// Payment status (`ECXX_X`).
-    pub payment_status: PaymentStatus,
-    /// The form of share (ECXXX_).
-    pub form: Form,
+macros::impl_group! {
+    /// Attributes applicable to convertible equities.
+    ///
+    /// Shares (common/ordinary) which, at the discretion of the holder, are convertible into other
+    /// securities, at a designated rate. The conversion privilege may be perpetual or limited to a
+    /// specific period.
+    pub struct Convertible {
+        /// Voting right.
+        ///
+        /// Indicates the kind of voting power conferred to the shareholder.
+        pub voting_right: VotingRight, 1;
+
+        /// Ownership/transfer/sales restrictions.
+        ///
+        /// The ownership or transfer of the security is subject to special conditions including
+        /// country-specific restrictions.
+        pub ownership: Ownership, 2;
+
+        /// Payment status.
+        pub payment_status: PaymentStatus, 3;
+
+        /// Form (negotiability, transmission).
+        pub form: Form, 4;
+    }
 }
 
-/// The attributes available to convertible preferred equities.
-#[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
-#[cfg_attr(
-    feature = "zerocopy",
-    derive(
-        zerocopy::Immutable,
-        zerocopy::IntoBytes,
-        zerocopy::KnownLayout,
-        zerocopy::TryFromBytes,
-    )
-)]
-pub struct PreferredConvertibleAttributes {
-    /// Voting rights (`EF_XXX`).
-    pub voting_right: VotingRight,
-    /// Redemption (`EFX_XXX`).
-    pub redemption: Redemption,
-    /// Income (`EFXX_X`).
-    pub income: Income,
-    /// The form of share (EFXXX_).
-    pub form: Form,
+macros::impl_group! {
+    /// Attributes applicable to preferred/preference convertible equities.
+    ///
+    /// Preferred/preference shares which, at the discretion of the holder, are convertible into
+    /// other securities, usually common/ordinary shares, at a designated rate. The conversion
+    /// privilege may be perpetual or limited to a specified period.
+    pub struct PreferredConvertible {
+        /// Voting right.
+        ///
+        /// Indicates the kind of voting power conferred to the shareholder.
+        pub voting_right: VotingRight, 1;
+
+        /// Redemption.
+        ///
+        /// Indicates the retirement provisions made for the shares.
+        pub redemption: Redemption, 2;
+
+        /// Income.
+        ///
+        /// Indicates the kind of dividend income the shareholders are entitled to.
+        pub income: Income, 3;
+
+        /// Form (negotiability, transmission).
+        pub form: Form, 4;
+    }
 }
 
-/// The attributes available to limited partnership units.
-#[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
-#[cfg_attr(
-    feature = "zerocopy",
-    derive(
-        zerocopy::Immutable,
-        zerocopy::IntoBytes,
-        zerocopy::KnownLayout,
-        zerocopy::TryFromBytes,
-    )
-)]
-pub struct LlpAttributes {
-    /// Voting rights (`EL_XXX`).
-    pub voting_right: VotingRight,
-    /// Ownership (`ELX_XXX`).
-    pub ownership: Ownership,
-    /// Payment status (`ELXX_XX`).
-    pub payment_status: PaymentStatus,
-    /// The form of unit (ELXXX_).
-    pub form: Form,
+macros::impl_group! {
+    /// Attributes applicable to limited partnership units.
+    ///
+    /// A limited partnership is a form of partnership similar to a general partnership, except
+    /// that in addition to one or more general partners (GPs), there are one or more limited
+    /// partners (LPs).
+    ///
+    /// Like shareholders in a corporation, the LPs have limited liability, i.e. they are only
+    /// liable on debts incurred by the firm to the extent of their registered investment and they
+    /// have no management authority. The GPs pay the LPs the equivalent of a dividend on their
+    /// investment, the nature and extent of which is usually defined in the partnership agreement.
+    pub struct LlpUnit {
+        /// Voting right.
+        ///
+        /// Indicates the kind of voting power conferred to the shareholder.
+        pub voting_right: VotingRight, 1;
+
+        /// Ownership/transfer/sales restrictions.
+        ///
+        /// The ownership or transfer of the security is subject to special conditions including
+        /// country-specific restrictions.
+        pub ownership: Ownership, 2;
+
+        /// Payment status.
+        pub payment_status: PaymentStatus, 3;
+
+        /// Form (negotiability, transmission).
+        pub form: Form, 4;
+    }
 }
 
-/// The attributes available to common equities.
-#[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
-#[cfg_attr(
-    feature = "zerocopy",
-    derive(
-        zerocopy::Immutable,
-        zerocopy::IntoBytes,
-        zerocopy::KnownLayout,
-        zerocopy::TryFromBytes,
-    )
-)]
-pub struct ReceiptAttributes {
-    /// Instrument dependency (`ED_XXX`).
-    pub dependency: Dependency,
-    /// Redemption/Conversion style (`EDX_XXX`).
-    pub redemption: RedemptionConversion,
-    /// Income (`EDXX_XX`)
-    pub income: Income,
-    /// The form of the receipt (EDXXX_).
-    pub form: Form,
+macros::impl_group! {
+    /// Attributes applicable to depository receipts.
+    ///
+    /// Depository receipts are securities that facilitate the ownership of securities traded in other
+    /// jurisdictions. Depository receipts are widely used in order to allow the trading of shares in
+    /// jurisdictions other than the one where the original shares were issued.
+    pub struct DepositoryReceipt {
+        /// Instrument dependency.
+        ///
+        /// Represents the ownership of an instrument provided in this table.
+        pub dependency: Dependency, 1;
+
+        /// Redemption/conversion of the underlying assets.
+        pub redemption: RedemptionConversion, 2;
+
+        /// Income (indicates the kind of dividend income the shareholders are entitled to).
+        pub income: Income, 3;
+
+        /// Form (negotiability, transmission).
+        pub form: Form, 4;
+    }
 }
 
-/// The attributes available to structured equities.
-#[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
-#[cfg_attr(
-    feature = "zerocopy",
-    derive(
-        zerocopy::Immutable,
-        zerocopy::IntoBytes,
-        zerocopy::KnownLayout,
-        zerocopy::TryFromBytes,
-    )
-)]
-pub struct StructuredAttributes {
-    /// Structured instrument type (`ER_XXX`)
-    pub kind: Kind,
-    /// Distribution style (`ERX_XX`)
-    pub distribution: Distribution,
-    /// Repayment style (`ERXX_X`)
-    pub repayment: Repayment,
-    /// Underlying asset type (ERXXX_)
-    pub underlying: Underlying,
+macros::impl_group! {
+    /// Attributes applicable to structured equities.
+    ///
+    /// The construction is generally based on a low exercise price option (LEPO) (base value less
+    /// discounted future dividends) which in some cases might be comparable to a direct investment in
+    /// the underlying asset(s) or a LEPO combined with other options, which together provide the
+    /// desired disbursement profile.
+    pub struct Structured {
+        /// Type.
+        pub kind: Kind, 1;
+
+        /// Distribution.
+        ///
+        /// Indicates the cash distribution provided by the structured instrument.
+        pub distribution: Distribution, 2;
+
+        /// Repayment.
+        ///
+        /// Indicates the repayment form provided by the structured instrument.
+        pub repayment: Repayment, 3;
+
+        /// Underlying assets.
+        ///
+        /// Indicates the type of underlying assets in which the structured instrument
+        /// participates.
+        pub underlying: Underlying, 4;
+    }
 }
 
-/// The attributes available to preference equities.
-#[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
-#[cfg_attr(
-    feature = "zerocopy",
-    derive(
-        zerocopy::Immutable,
-        zerocopy::IntoBytes,
-        zerocopy::KnownLayout,
-        zerocopy::TryFromBytes,
-    )
-)]
-pub struct PreferenceAttributes {
-    /// Voting rights (`ER_XXX`).
-    pub voting_right: VotingRight,
-    /// Redemption (`ERX_XX`).
-    pub redemption: Redemption,
-    /// Income (`ERXX_X`).
-    pub income: Income,
-    /// The form of the receipt (ERXXX_)
-    pub form: Form,
+macros::impl_group! {
+    /// Attributes applicable to other equities.
+    ///
+    /// Equities that do not fit into any of the other Equity Groups.
+    pub struct Other {
+        /// Not applicable/undefined.
+        pub attr1: NotApplicable, 1;
+
+        /// Not applicable/undefined.
+        pub attr2: NotApplicable, 2;
+
+        /// Not applicable/undefined.
+        pub attr3: NotApplicable, 3;
+
+        /// Form (negotiability, transmission).
+        pub form: Form, 4;
+    }
 }
 
-/// The attributes available to preference equities.
-#[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
-#[cfg_attr(
-    feature = "zerocopy",
-    derive(
-        zerocopy::Immutable,
-        zerocopy::IntoBytes,
-        zerocopy::KnownLayout,
-        zerocopy::TryFromBytes,
-    )
-)]
-pub struct PreferenceConvertibleAttributes {
-    /// Voting rights (`EV_XXX`).
-    pub voting_right: VotingRight,
-    /// Redemption (`EVX_XX`).
-    pub redemption: Redemption,
-    /// Income (`EVXX_X`).
-    pub income: Income,
-    /// The form of the receipt (EVXXX_)
-    pub form: Form,
+macros::impl_attr! {
+    /// Voting right (indicates the kind of voting power conferred to the shareholder).
+    enum VotingRight[2] InvalidVotingRight {
+        /// Voting.
+        ///
+        /// Each share has one vote.
+        Voting = b'V', "V";
+
+        /// Non-voting.
+        ///
+        /// The shareholder has no voting right.
+        NonVoting = b'N', "N";
+
+        /// Restricted voting.
+        ///
+        /// The shareholder may be entitled to less than one vote per share.
+        Restricted = b'R', "R";
+
+        /// Enhanced voting.
+        ///
+        /// The shareholder is entitled to more than one vote per share.
+        Enhanced = b'E', "E";
+    }
 }
 
-/// The attributes available to preference equities.
-#[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
-#[cfg_attr(
-    feature = "zerocopy",
-    derive(
-        zerocopy::Immutable,
-        zerocopy::IntoBytes,
-        zerocopy::KnownLayout,
-        zerocopy::TryFromBytes,
-    )
-)]
-pub struct UnitAttributes {
-    /// Closed/open end (`EU_XXX`).
-    pub open_closed: OpenClosed,
-    /// Redemption (`EUX_XX`).
-    pub distribution: DistributionPolicy,
-    /// Income (`EUXX_X`).
-    pub assets: Asset,
-    /// The form of the receipt (EVXXX_)
-    pub form: UnitForm,
+macros::impl_attr! {
+    /// Ownership/transfer/sales restrictions.
+    ///
+    /// The ownership or transfer of the security is subject to special conditions including
+    /// country-specific restrictions.
+    enum Ownership[3] InvalidOwnership {
+        /// Restrictions.
+        Restricted = b'T', "T";
+
+        /// Free (unrestricted).
+        Free = b'U', "U";
+    }
 }
 
-/// The attributes available to other equities.
-#[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
-#[cfg_attr(
-    feature = "zerocopy",
-    derive(
-        zerocopy::Immutable,
-        zerocopy::IntoBytes,
-        zerocopy::KnownLayout,
-        zerocopy::TryFromBytes,
-    )
-)]
-pub struct OtherAttributes {
-    /// An un-used attribute.
-    pub attr1: NotApplicable,
-    /// An un-used attribute.
-    pub attr2: NotApplicable,
-    /// An un-used attribute.
-    pub attr3: NotApplicable,
-    /// The form of this equity.
-    pub form: Form,
+macros::impl_attr! {
+    /// The payment status.
+    enum PaymentStatus[4] InvalidPaymentStatus {
+        /// Fully paid.
+        Fully = b'F', "F";
+
+        /// Nil paid.
+        Nil = b'O', "O";
+
+        /// Partially paid.
+        Partial = b'P', "P";
+    }
 }
 
-/// The attributes available to other equities.
-#[derive(Clone, Copy, Debug, Default, Eq, Hash, Ord, PartialEq, PartialOrd)]
-#[cfg_attr(
-    feature = "zerocopy",
-    derive(
-        zerocopy::Immutable,
-        zerocopy::IntoBytes,
-        zerocopy::KnownLayout,
-        zerocopy::TryFromBytes,
-        zerocopy::Unaligned,
-    )
-)]
-#[repr(u8)]
-pub enum NotApplicable {
-    /// Not applicable / undefined.
-    #[default]
-    Undefined = b'X',
+macros::impl_attr! {
+    /// Redemption (indicates the retirement provisions made for the shares).
+    enum Redemption[3] InvalidRedemption {
+        /// Redeemable.
+        ///
+        /// The shares may be redeemed at the option of the issuer and/or of the shareholder.
+        Redeemable = b'R', "R";
+
+        /// Extendible.
+        ///
+        /// The redemption date can be extended at the issuer or holder option.
+        Extendible = b'E', "E";
+
+        /// Redeemable/extendible.
+        ///
+        /// The issuer and/or holders of redeemable shares with a fixed maturity date have the
+        /// option to extend the maturity date.
+        RedeemableExtendible = b'T', "T";
+
+        /// Exchangeable.
+        ///
+        /// The shares may be exchanged for securities of another issuer.
+        Exchangeable = b'G', "G";
+
+        /// Redeemable/exchangeable/extendible.
+        ///
+        /// The issuer and/or holders of redeemable shares with a fixed maturity date have the
+        /// option to extend the maturity date and the shares may be exchanged for securities of
+        /// another issuer.
+        RedeemableExchangeableExtendible = b'A', "A";
+
+        /// Redeemable/exchangeable.
+        ///
+        /// The shares may be redeemed at the option of the issuer and/or of the shareholder and
+        /// may be exchanged for securities of another issuer.
+        RedeemableExchangeable = b'C', "C";
+
+        /// Perpetual.
+        ///
+        /// The share has no fixed maturity date.
+        Perpetual = b'N', "N";
+    }
 }
 
-/// The attributes available to common equities.
-#[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
-#[cfg_attr(
-    feature = "zerocopy",
-    derive(
-        zerocopy::Immutable,
-        zerocopy::IntoBytes,
-        zerocopy::KnownLayout,
-        zerocopy::TryFromBytes,
-        zerocopy::Unaligned,
-    )
-)]
-#[repr(u8)]
-pub enum VotingRight {
-    /// The shares are voting.
-    Voting = b'V',
-    /// The shares are non-voting.
-    NonVoting = b'N',
-    /// The shares are restricted-voting.
-    Restricted = b'R',
-    /// The shares have enhanced voting.
-    Enhanced = b'E',
+macros::impl_attr! {
+    /// Income.
+    ///
+    /// Indicates the kind of dividend income the shareholders are entitled to.
+    enum Income[4] InvalidIncome {
+        /// Fixed rate income.
+        ///
+        /// The shareholder periodically receives a stated income.
+        FixedRate = b'F', "F";
+
+        /// Cumulative, fixed rate income.
+        ///
+        /// The shareholder periodically receives a stated amount; dividends not paid in any year
+        /// accumulate and shall be paid at a later date before dividends can be paid on the
+        /// common/ordinary shares.
+        CumulativeFixedRate = b'C', "C";
+
+        /// Participating income.
+        ///
+        /// Preferred/preference shareholders, in addition to receiving their fixed rate of prior
+        /// dividend, share with the common shareholders in further dividend distributions and in
+        /// capital distributions.
+        Participating = b'P', "P";
+
+        /// Cumulative, participating income.
+        ///
+        /// Shareholders are entitled to dividends in excess of the stipulated preferential rate
+        /// under specified conditions; dividends not paid in any year accumulate and shall be paid
+        /// at a later date before dividends can be paid on the common/ordinary shares.
+        CumulativeParticipating = b'Q', "Q";
+
+        /// Adjustable/variable rate income.
+        ///
+        /// The dividend rate is set periodically, usually based on a certain yield.
+        AdjustableRate = b'A', "A";
+
+        /// Normal rate income.
+        ///
+        /// Shareholders are entitled to the same dividends as common/ordinary shareholders, but
+        /// have other privileges, for example as regards distribution of assets upon dissolution.
+        NormalRate = b'N', "N";
+
+        /// Auction rate income.
+        ///
+        /// Dividend is adjusted through an auction, such as the Dutch auction.
+        AuctionRate = b'U', "U";
+    }
 }
 
-/// The attributes available to common equities.
-#[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
-#[cfg_attr(
-    feature = "zerocopy",
-    derive(
-        zerocopy::Immutable,
-        zerocopy::IntoBytes,
-        zerocopy::KnownLayout,
-        zerocopy::TryFromBytes,
-        zerocopy::Unaligned,
-    )
-)]
-#[repr(u8)]
-pub enum Ownership {
-    /// There are restrictions on ownership.
-    Restrictions = b'T',
-    /// There are no restrictions.
-    Free = b'U',
+macros::impl_attr! {
+    /// Instrument dependency.
+    ///
+    /// Represents the ownership of an instrument provided in this table.
+    enum Dependency[2] InvalidDependency {
+        /// Common/ordinary shares.
+        Common = b'S', "S";
+
+        /// Preferred/preference shares.
+        Preferred = b'P', "P";
+
+        /// Common/Ordinary convertible shares.
+        CommonConvertible = b'C', "C";
+
+        /// Preferred/preference convertible shares.
+        PreferredConvertible = b'F', "F";
+
+        /// Limited partnership units.
+        LlpUnit = b'L', "L";
+
+        /// Other (miscellaneous).
+        Other = b'M', "M";
+    }
 }
 
-/// The payment status.
-#[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
-#[cfg_attr(
-    feature = "zerocopy",
-    derive(
-        zerocopy::Immutable,
-        zerocopy::IntoBytes,
-        zerocopy::KnownLayout,
-        zerocopy::TryFromBytes,
-        zerocopy::Unaligned,
-    )
-)]
-#[repr(u8)]
-pub enum PaymentStatus {
-    /// Fully paid.
-    Fully = b'F',
-    /// Nil paid.
-    Nil = b'O',
-    /// Partially paid.
-    Partial = b'P',
+macros::impl_attr! {
+    /// Redemption/conversion of the underlying assets.
+    ///
+    /// # Guidelines
+    ///
+    /// For common/ordinary shares and limited partnership units, only the values `N`
+    /// ([`Perpetual`](RedemptionConversion::Perpetual)) `X` (not
+    /// applicable/undefined) may be used. All values apply for other underlying instruments.
+    enum RedemptionConversion[3] InvalidRedemptionConversion {
+        /// Redeemable.
+        Redeemable = b'R', "R";
+
+        /// Perpetual.
+        Perpetual = b'N', "N";
+
+        /// Convertible.
+        Convertible = b'B', "B";
+
+        /// Convertible/redeemable.
+        ConvertibleRedeemable = b'D', "D";
+    }
 }
 
-/// The redemption style.
-#[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
-#[cfg_attr(
-    feature = "zerocopy",
-    derive(
-        zerocopy::Immutable,
-        zerocopy::IntoBytes,
-        zerocopy::KnownLayout,
-        zerocopy::TryFromBytes,
-        zerocopy::Unaligned,
-    )
-)]
-#[repr(u8)]
-pub enum Redemption {
-    /// Redeemable.
-    Redeemable = b'R',
-    /// Extendible.
-    Extendible = b'E',
-    /// Redeemable / Extendible.
-    RedeemableExtendible = b'T',
-    /// Exchangeable.
-    Exchangeable = b'G',
-    /// Redeemable / Exchangeable / Extendible.
-    RedeemableExchangeableExtendible = b'A',
-    /// Redeemable / Exchangeable.
-    RedeemableExchangeable = b'C',
-    /// Perpetual.
-    Perpetual = b'N',
+macros::impl_attr! {
+    /// The structured instrument type.
+    enum Kind[2] InvalidStructuredKind {
+        /// Tracker certificate.
+        ///
+        /// Participation in development of the underlying asset(s); reflects underlying price
+        /// moves 1:1 (adjusted by conversion ratio and any related fees); risk is comparable to
+        /// direct investment in the underlying asset(s).
+        Tracker = b'A', "A";
+
+        /// Outperformance certificate.
+        ///
+        /// Participation in development of the underlying asset(s); disproportionate participation
+        /// (outperformance) in positive performance above the strike; reflects underlying price
+        /// moves 1:1 (adjusted by conversion ratio and any related fees); risk is comparable to
+        /// direct investment in the underlying asset(s).
+        Outperforming = b'B', "B";
+
+        /// Bonus certificate.
+        ///
+        /// Participation in development of the underlying asset(s); minimum redemption is equal to
+        /// the nominal value provided the barrier has not been breached; if the barrier is
+        /// breached the product changes into a tracker certificate; with greater risk multiple
+        /// underlying asset(s) (worst-of) allow for a higher bonus level or lower barrier; reduced
+        /// risk compared to a direct investment into the underlying asset(s).
+        Bonus = b'C', "C";
+
+        /// Outperformance bonus certificate.
+        ///
+        /// Participation in development of the underlying asset(s); disproportionate participation
+        /// (outperformance) in positive performance above the strike; minimum redemption is equal
+        /// to the nominal value provided the barrier has not been breached; if the barrier is
+        /// breached the product changes into an outperformance certificate; with greater risk
+        /// multiple underlying asset(s) (worst-of) allow for a higher bonus level or lower
+        /// barrier; reduced risk compared to a direct investment into the underlying asset(s).
+        OutperformanceBonus = b'D', "D";
+
+        /// Twin-win-certificate.
+        ///
+        /// Participation in development of the underlying asset(s); profits possible with rising
+        /// and falling underlying asset values; falling underlying asset price converts into
+        /// profit up to the barrier; minimum redemption is equal to the nominal value provided the
+        /// barrier has not been breached; if the barrier is breached the product changes into a
+        /// tracker certificate; with higher risk levels, multiple underlying asset(s) (worst-of)
+        /// allow for a higher bonus level or lower barrier; reduced risk compared to a direct
+        /// investment into the underlying asset(s).
+        TwinWin = b'E', "E";
+
+        /// Other (miscellaneous).
+        Other = b'M', "M";
+    }
 }
 
-/// The redemption style.
-#[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
-#[cfg_attr(
-    feature = "zerocopy",
-    derive(
-        zerocopy::Immutable,
-        zerocopy::IntoBytes,
-        zerocopy::KnownLayout,
-        zerocopy::TryFromBytes,
-        zerocopy::Unaligned,
-    )
-)]
-#[repr(u8)]
-pub enum Income {
-    /// Fixed Rate.
-    FixedRate = b'F',
-    /// Cumulative, Fixed Rate.
-    CumulativeFixedRate = b'C',
-    /// Participating.
-    Participating = b'P',
-    /// Cumulative, Participating.
-    CumulativeParticipating = b'Q',
-    /// Adjustable/Variable Rate.
-    AdjustableRate = b'A',
-    /// Normal Rate.
-    NormalRate = b'N',
-    /// Auction Rate.
-    AuctionRate = b'U',
-    /// Dividends.
-    Dividends = b'D',
+macros::impl_attr! {
+    /// Distribution (indicates the cash distribution provided by the structured instrument).
+    enum Distribution[3] InvalidDistribution {
+        /// Dividend payments (depending on strategy of the structured instrument).
+        Dividend = b'D', "D";
+        /// No payments.
+        None = b'Y', "Y";
+        /// Others (miscellaneous).
+        Other = b'M', "M";
+    }
 }
 
-/// The instrument dependency.
-#[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
-#[cfg_attr(
-    feature = "zerocopy",
-    derive(
-        zerocopy::Immutable,
-        zerocopy::IntoBytes,
-        zerocopy::KnownLayout,
-        zerocopy::TryFromBytes,
-        zerocopy::Unaligned,
-    )
-)]
-#[repr(u8)]
-pub enum Dependency {
-    /// Common/Ordinary shares.
-    Common = b'S',
-    /// Preferred/Preference shares.
-    PreferredPreference = b'P',
-    /// Common/Ordinary convertible shares.
-    CommonConvertible = b'C',
-    /// Preferred/Preference convertible shares.
-    PreferredPreferenceConvertible = b'F',
-    /// Limited partnership units.
-    LlpUnit = b'L',
-    /// Other (misc).
-    Other = b'M',
+macros::impl_attr! {
+    /// Repayment (indicates the repayment form provided by the structured instrument).
+    enum Repayment[4] InvalidRepayment {
+        /// Cash repayment.
+        Cash = b'F', "F";
+
+        /// Physical repayment.
+        Physical = b'V', "V";
+
+        /// Elect at settlement (determined at the time of settlement).
+        Elect = b'E', "E";
+
+        /// Others (miscellaneous).
+        Other = b'M', "M";
+    }
 }
 
-/// The redemption conversion type.
-#[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
-#[cfg_attr(
-    feature = "zerocopy",
-    derive(
-        zerocopy::Immutable,
-        zerocopy::IntoBytes,
-        zerocopy::KnownLayout,
-        zerocopy::TryFromBytes,
-        zerocopy::Unaligned,
-    )
-)]
-#[repr(u8)]
-pub enum RedemptionConversion {
-    /// Redeemable.
-    Redeemable = b'R',
-    /// Perpetual.
-    Perpetual = b'N',
-    /// Convertible.
-    Convertible = b'B',
-    /// Convertible/Redeemable.
-    ConvertibleRedeemable = b'D',
-    /// Not Applicable/Undefined.
-    Undefined = b'X',
-}
+macros::impl_attr! {
+    /// Underlying assets (indicates the type of underlying assets in which the structured
+    /// instrument participates).
+    enum Underlying[5] InvalidUnderlying {
+        /// Baskets.
+        ///
+        /// Group of securities that have been put together for a specific investment purpose.
+        Baskets = b'B', "B";
 
-/// The structured instrument type.
-#[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
-#[cfg_attr(
-    feature = "zerocopy",
-    derive(
-        zerocopy::Immutable,
-        zerocopy::IntoBytes,
-        zerocopy::KnownLayout,
-        zerocopy::TryFromBytes,
-        zerocopy::Unaligned,
-    )
-)]
-#[repr(u8)]
-pub enum Kind {
-    /// Tracker certificate.
-    Tracker = b'A',
-    /// Outperforming certificate.
-    Outperforming = b'B',
-    /// Bonus certificate.
-    Bonus = b'C',
-    /// Outperformance bonus certificate.
-    OutperformanceBonus = b'D',
-    /// Twin-Win certificate.
-    TwinWin = b'E',
-    /// Other (misc).
-    Other = b'M',
-}
+        /// Equities.
+        Equities = b'S', "S";
 
-/// The structured instrument type.
-#[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
-#[cfg_attr(
-    feature = "zerocopy",
-    derive(
-        zerocopy::Immutable,
-        zerocopy::IntoBytes,
-        zerocopy::KnownLayout,
-        zerocopy::TryFromBytes,
-        zerocopy::Unaligned,
-    )
-)]
-#[repr(u8)]
-pub enum Distribution {
-    /// Divident payments.
-    Dividend = b'D',
-    /// No payments.
-    None = b'Y',
-    /// Others (misc).
-    Other = b'M',
-}
+        /// Debt instruments.
+        Debt = b'D', "D";
 
-/// The structured instrument type.
-#[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
-#[cfg_attr(
-    feature = "zerocopy",
-    derive(
-        zerocopy::Immutable,
-        zerocopy::IntoBytes,
-        zerocopy::KnownLayout,
-        zerocopy::TryFromBytes,
-        zerocopy::Unaligned,
-    )
-)]
-#[repr(u8)]
-pub enum Repayment {
-    /// Cash repayment.
-    Cash,
-    /// Physical repayment.
-    Physical,
-    /// Elect at settlement.
-    Elect,
-    /// Others (misc).
-    Other = b'M',
-}
+        /// Derivatives (options, futures, swaps, spot, forwards, strategies, financing).
+        Derivatives = b'G', "G";
 
-/// The underlier of a structured instrument.
-#[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
-#[cfg_attr(
-    feature = "zerocopy",
-    derive(
-        zerocopy::Immutable,
-        zerocopy::IntoBytes,
-        zerocopy::KnownLayout,
-        zerocopy::TryFromBytes,
-        zerocopy::Unaligned,
-    )
-)]
-#[repr(u8)]
-pub enum Underlying {
-    /// Baskets.
-    Baskets = b'B',
-    /// Equities.
-    Equities = b'S',
-    /// Debt instruments.
-    Debt = b'D',
-    /// Derivatives.
-    Derivatives = b'G',
-    /// Commodities.
-    Commodities = b'T',
-    /// Currencies.
-    Currencies = b'C',
-    /// Indices.
-    Indices = b'I',
-    /// Interest rates.
-    Rates = b'N',
-    /// Others (misc).
-    Other = b'M',
-}
+        /// Commodities.
+        Commodities = b'T', "T";
 
-/// The underlier of a structured instrument.
-#[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
-#[cfg_attr(
-    feature = "zerocopy",
-    derive(
-        zerocopy::Immutable,
-        zerocopy::IntoBytes,
-        zerocopy::KnownLayout,
-        zerocopy::TryFromBytes,
-        zerocopy::Unaligned,
-    )
-)]
-#[repr(u8)]
-pub enum DistributionPolicy {
-    /// Income funds.
-    Income = b'I',
-    /// Growth funds.
-    Growth = b'G',
-    /// Mixed funds.
-    Mixed = b'M',
-}
+        /// Currencies (specified exchange rate).
+        Currencies = b'C', "C";
 
-/// The closed/open-end status of the units.
-#[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
-#[cfg_attr(
-    feature = "zerocopy",
-    derive(
-        zerocopy::Immutable,
-        zerocopy::IntoBytes,
-        zerocopy::KnownLayout,
-        zerocopy::TryFromBytes,
-        zerocopy::Unaligned,
-    )
-)]
-#[repr(u8)]
-pub enum OpenClosed {
-    /// Closed-end.
-    Closed = b'C',
-    /// Open-end.
-    Open = b'O',
-}
+        /// Indices (the performance of an index).
+        Indices = b'I', "I";
 
-/// The assets of the units.
-#[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
-#[cfg_attr(
-    feature = "zerocopy",
-    derive(
-        zerocopy::Immutable,
-        zerocopy::IntoBytes,
-        zerocopy::KnownLayout,
-        zerocopy::TryFromBytes,
-        zerocopy::Unaligned,
-    )
-)]
-#[repr(u8)]
-pub enum Asset {
-    /// Real-estate.
-    RealEstate = b'R',
-    /// Securities.
-    Securities = b'S',
-    /// Commodities.
-    Commodities = b'C',
-    /// Derivatives.
-    Derivatives = b'D',
-}
+        /// Interest rates (specified amount based on the future level of interest rates).
+        Rates = b'N', "N";
 
-/// The form of the units.
-#[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
-#[cfg_attr(
-    feature = "zerocopy",
-    derive(
-        zerocopy::Immutable,
-        zerocopy::IntoBytes,
-        zerocopy::KnownLayout,
-        zerocopy::TryFromBytes,
-        zerocopy::Unaligned,
-    )
-)]
-#[repr(u8)]
-pub enum UnitForm {
-    /// Bearer shares.
-    Bearer = b'B',
-    /// Registered shares.
-    Registered = b'R',
-    /// Bearer/Registered shares.
-    BearerRegistered = b'N',
-    /// Bearer depository receipt.
-    BearerReceipt = b'Z',
-    /// Registered depository receipt.
-    RegisteredReceipt = b'A',
-    /// Others (misc).
-    Other = b'M',
+        /// Others (miscellaneous).
+        Other = b'M', "M";
+    }
 }
