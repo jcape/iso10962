@@ -5,7 +5,7 @@ use crate::{Form, NotApplicable, macros};
 macros::impl_category! {
     /// Financial instruments evidencing monies owed by the issuer to the holder on terms as
     /// specified.
-    enum Category {
+    pub enum Debt {
         /// `B`: Bonds.
         ///
         /// Any interest-bearing or discounted security that normally obliges the issuer to pay the
@@ -416,7 +416,7 @@ macros::impl_group! {
 
 macros::impl_attr! {
     /// Type of interest or cash payment.
-    enum InterestInKindOrCash[2] InvalidInterestInKindOrCash {
+    pub enum InterestInKindOrCash[2] InvalidInterestInKindOrCash {
         /// Fixed rate.
         ///
         /// All interest payments are known at issuance and remain constant for the life of the issue.
@@ -450,7 +450,7 @@ macros::impl_attr! {
     /// be used for unsecured securities that are neither senior nor junior. `U`
     /// ([`Unsecured`](Guarantee::Unsecured)) may be used only if one of these codes does not apply
     /// to the relevant security.
-    enum Guarantee[3, 4] InvalidGuarantee {
+    pub enum Guarantee[3, 4] InvalidGuarantee {
         /// Government guarantee.
         ///
         /// The debt instrument is guaranteed by a federal, state, (semi)-government, sovereigns,
@@ -517,7 +517,7 @@ macros::impl_attr! {
     /// Redemption/reimbursement.
     ///
     /// Indicates the retirement provisions made for the debt issue.
-    enum Redemption[4, 5] InvalidRedemption {
+    pub enum Redemption[4, 5] InvalidRedemption {
         /// Fixed maturity.
         ///
         /// The principal amount is repaid in full at maturity.
@@ -577,7 +577,7 @@ macros::impl_attr! {
 
 macros::impl_attr! {
     /// Type of interest.
-    enum InterestInKind[2] InvalidInterestInKind {
+    pub enum InterestInKind[2] InvalidInterestInKind {
         /// Fixed rate.
         Fixed = b'F', "F";
         /// Zero rate/discounted.
@@ -591,7 +591,7 @@ macros::impl_attr! {
 
 macros::impl_attr! {
     /// Type of structured instrument with capital protection.
-    enum ProtectedKind[2] InvalidProtectedKind {
+    pub enum ProtectedKind[2] InvalidProtectedKind {
         /// Capital protection certificate with participation.
         ///
         /// Minimum redemption at expiry equivalent to the capital protection; capital protection
@@ -639,7 +639,7 @@ macros::impl_attr! {
     /// Distribution.
     ///
     /// Indicates the cash distribution provided by the structured instrument.
-    enum Distribution[3] InvalidDistribution {
+    pub enum Distribution[3] InvalidDistribution {
         /// Fixed interest payments.
         Fixed = b'F', 1;
 
@@ -661,7 +661,7 @@ macros::impl_attr! {
     /// Repayment.
     ///
     /// Indicates the repayment form provided by the structured instrument.
-    enum ProtectedRepayment[4] InvalidRepayment {
+    pub enum ProtectedRepayment[4] InvalidRepayment {
         /// Fixed cash repayment.
         ///
         /// Only protected capital level.
@@ -681,7 +681,7 @@ macros::impl_attr! {
     /// Underlying assets.
     ///
     /// Indicates the type of underlying assets in which the structured instrument participates.
-    enum Underlying[5] InvalidUnderlying {
+    pub enum Underlying[5] InvalidAsset {
         /// Baskets.
         Basket = b'B', "B";
 
@@ -711,7 +711,7 @@ macros::impl_attr! {
 
 macros::impl_attr! {
     /// Type of structured instrument without protection.
-    enum UnprotectedKind[2] InvalidUnprotectedKind {
+    pub enum UnprotectedKind[2] InvalidUnprotectedKind {
         /// Discount certificate.
         ///
         /// Should the underlying asset close below the strike on expiry, the underlying asset(s)
@@ -774,7 +774,7 @@ macros::impl_attr! {
     /// Repayment.
     ///
     /// Indicates the repayment form provided by the structured instrument.
-    enum UnprotectedRepayment[4] InvalidRepayment {
+    pub enum UnprotectedRepayment[4] InvalidRepayment {
         /// Repayment in cash (depending on the underlying, if the barrier is not breached).
         Cash = b'R', "R";
 
@@ -794,7 +794,7 @@ macros::impl_attr! {
 
 macros::impl_attr! {
     /// Type of interest.
-    enum Interest[2] InvalidInterest {
+    pub enum Interest[2] InvalidInterest {
         /// Fixed rate.
         Fixed = b'F', "F";
 
@@ -808,7 +808,7 @@ macros::impl_attr! {
 
 macros::impl_attr! {
     /// Instrument dependency.
-    enum Dependency[2] InvalidDependency {
+    pub enum Dependency[2] InvalidDependency {
         /// Bonds.
         Bonds = b'B', "B";
 
@@ -840,7 +840,7 @@ macros::impl_attr! {
 
 macros::impl_attr! {
     /// Type of interest/cache payment.
-    enum InterestOrCash[3] InvalidInterestOrCash {
+    pub enum InterestOrCash[3] InvalidInterestOrCash {
         /// Fixed rate.
         Fixed = b'F', "F";
 
@@ -858,7 +858,7 @@ macros::impl_attr! {
 
 macros::impl_attr! {
     /// Debt instruments that do not fit into any of the Groups of debt instruments.
-    enum OtherKind[2] InvalidOtherKind {
+    pub enum OtherKind[2] InvalidOtherKind {
         /// Bank loan.
         ///
         /// An amount of money loaned at interest by a bank to a borrower, usually on collateral

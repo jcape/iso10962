@@ -1,10 +1,10 @@
-//! Equities-category CFI details.
+//! Equities category support.
 
 use crate::{Form, NotApplicable, macros};
 
 macros::impl_category! {
     /// Financial instruments representing an ownership interest in an entity or pool of assets.
-    enum Equity {
+    pub enum Equity {
         /// `S`: Common/ordinary shares.
         ///
         /// Holders are typically entitled to vote and receive dividends. In the event of
@@ -277,7 +277,7 @@ macros::impl_group! {
 
 macros::impl_attr! {
     /// Voting right (indicates the kind of voting power conferred to the shareholder).
-    enum VotingRight[2] InvalidVotingRight {
+    pub enum VotingRight[2] InvalidVotingRight {
         /// Voting.
         ///
         /// Each share has one vote.
@@ -305,7 +305,7 @@ macros::impl_attr! {
     ///
     /// The ownership or transfer of the security is subject to special conditions including
     /// country-specific restrictions.
-    enum Ownership[3] InvalidOwnership {
+    pub enum Ownership[3] InvalidOwnership {
         /// Restrictions.
         Restricted = b'T', "T";
 
@@ -316,7 +316,7 @@ macros::impl_attr! {
 
 macros::impl_attr! {
     /// The payment status.
-    enum PaymentStatus[4] InvalidPaymentStatus {
+    pub enum PaymentStatus[4] InvalidPaymentStatus {
         /// Fully paid.
         Fully = b'F', "F";
 
@@ -330,7 +330,7 @@ macros::impl_attr! {
 
 macros::impl_attr! {
     /// Redemption (indicates the retirement provisions made for the shares).
-    enum Redemption[3] InvalidRedemption {
+    pub enum Redemption[3] InvalidRedemption {
         /// Redeemable.
         ///
         /// The shares may be redeemed at the option of the issuer and/or of the shareholder.
@@ -376,7 +376,7 @@ macros::impl_attr! {
     /// Income.
     ///
     /// Indicates the kind of dividend income the shareholders are entitled to.
-    enum Income[4] InvalidIncome {
+    pub enum Income[4] InvalidIncome {
         /// Fixed rate income.
         ///
         /// The shareholder periodically receives a stated income.
@@ -425,7 +425,7 @@ macros::impl_attr! {
     /// Instrument dependency.
     ///
     /// Represents the ownership of an instrument provided in this table.
-    enum Dependency[2] InvalidDependency {
+    pub enum Dependency[2] InvalidDependency {
         /// Common/ordinary shares.
         Common = b'S', "S";
 
@@ -454,7 +454,7 @@ macros::impl_attr! {
     /// For common/ordinary shares and limited partnership units, only the values `N`
     /// ([`Perpetual`](RedemptionConversion::Perpetual)) `X` (not
     /// applicable/undefined) may be used. All values apply for other underlying instruments.
-    enum RedemptionConversion[3] InvalidRedemptionConversion {
+    pub enum RedemptionConversion[3] InvalidRedemptionConversion {
         /// Redeemable.
         Redeemable = b'R', "R";
 
@@ -471,7 +471,7 @@ macros::impl_attr! {
 
 macros::impl_attr! {
     /// The structured instrument type.
-    enum Kind[2] InvalidStructuredKind {
+    pub enum Kind[2] InvalidStructuredKind {
         /// Tracker certificate.
         ///
         /// Participation in development of the underlying asset(s); reflects underlying price
@@ -524,7 +524,7 @@ macros::impl_attr! {
 
 macros::impl_attr! {
     /// Distribution (indicates the cash distribution provided by the structured instrument).
-    enum Distribution[3] InvalidDistribution {
+    pub enum Distribution[3] InvalidDistribution {
         /// Dividend payments (depending on strategy of the structured instrument).
         Dividend = b'D', "D";
         /// No payments.
@@ -536,7 +536,7 @@ macros::impl_attr! {
 
 macros::impl_attr! {
     /// Repayment (indicates the repayment form provided by the structured instrument).
-    enum Repayment[4] InvalidRepayment {
+    pub enum Repayment[4] InvalidRepayment {
         /// Cash repayment.
         Cash = b'F', "F";
 
@@ -554,7 +554,7 @@ macros::impl_attr! {
 macros::impl_attr! {
     /// Underlying assets (indicates the type of underlying assets in which the structured
     /// instrument participates).
-    enum Underlying[5] InvalidUnderlying {
+    pub enum Underlying[5] InvalidAsset {
         /// Baskets.
         ///
         /// Group of securities that have been put together for a specific investment purpose.

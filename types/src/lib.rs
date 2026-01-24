@@ -4,6 +4,7 @@
 #![cfg_attr(docsrs, feature(doc_cfg))]
 #![no_std]
 
+pub mod civ;
 pub mod debt;
 pub mod equity;
 
@@ -81,6 +82,15 @@ pub trait CfiGroup: Sized {
 }
 
 /// A hierarchical enumeration of CFI Codes.
+///
+/// # Examples
+///
+/// ```rust
+/// use iso10962_types::{CFI_LENGTH, Code};
+/// use std::mem;
+///
+/// assert_eq!(CFI_LENGTH, mem::size_of::<Code>());
+/// ```
 #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
 #[repr(u8)]
 pub enum Code {
@@ -93,14 +103,14 @@ pub enum Code {
     ///
     /// Financial instruments evidencing monies owed by the issuer to the holder on terms as
     /// specified.
-    Debt(debt::Category) = b'D',
+    Debt(debt::Debt) = b'D',
 
     /// `C`: Collective investment vehicles.
     ///
     /// Securities representing a portion of assets pooled by investors run by a management company
     /// whose share capital remains separate from such assets and includes issues of shares or
     /// units in the form of, for example, a unit trust, mutual fund, OICVM, OPCVM, SICAV or SICAF.
-    Civ(()) = b'C',
+    Civ(civ::Civ) = b'C',
 
     /// `R`: Entitlement (rights).
     ///
@@ -194,7 +204,7 @@ impl Code {
     /// Whether this instance is a collective investment vehicle.
     #[must_use]
     pub const fn is_civ(&self) -> bool {
-        matches!(self, Self::Civ(()))
+        matches!(self, Self::Civ(_))
     }
 
     /// Whether this instance is a entitlement/right.
@@ -285,7 +295,7 @@ impl Code {
 
 macros::impl_attr! {
     /// Form (negotiability, transmission).
-    enum Form[5] InvalidForm {
+    pub enum Form[5] InvalidForm {
         /// `B`: Bearer (the owner is not registered in the books of the issuer or of the
         /// registrar).
         Bearer = b'B', "B";
@@ -306,7 +316,7 @@ macros::impl_attr! {
 
 macros::impl_attr! {
     /// Not applicable/undefined.
-    enum NotApplicable[2, 3, 4, 5] InvalidUnassigned {}
+    pub enum NotApplicable[2, 3, 4, 5] InvalidUnassigned {}
 }
 
 #[cfg(test)]
