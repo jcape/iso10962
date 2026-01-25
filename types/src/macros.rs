@@ -1,5 +1,6 @@
-//! Macros
+//! Macros.
 
+/// Generate a new attribute.
 macro_rules! impl_attr {
     (
         $(#[$doc:meta])*
@@ -28,6 +29,7 @@ macro_rules! impl_attr {
             impl $name {
                 $(
                     #[doc = " Check if this value is [`" $name "::" $variant "`]."]
+                    #[inline]
                     #[must_use]
                     $access const fn [<is_ $variant:snake>](&self) -> bool {
                         matches!(self, Self::$variant)
@@ -35,6 +37,7 @@ macro_rules! impl_attr {
                 )*
 
                 #[doc = " Check if this value is [`" $name "::Undefined"]
+                #[inline]
                 #[must_use]
                 $access const fn is_undefined(&self) -> bool {
                         matches!(self, Self::Undefined)
@@ -45,6 +48,7 @@ macro_rules! impl_attr {
                 /// # Errors
                 ///
                 #[doc = " - [`Error::" $error "`](crate::Error::" $error ") if the byte is not one of the options."]
+                #[inline]
                 $access const fn from_byte(value: u8) -> crate::error::Result<Self> {
                     match value {
                         $(
@@ -61,6 +65,7 @@ macro_rules! impl_attr {
                 /// - [`Error::InvalidLength`](crate::Error::InvalidLength) if the byte slice is
                 ///   not [`CFI_LENGTH`](crate::CFI_LENGTH) bytes.
                 #[doc = " - [`Error::" $error "`](crate::Error::" $error ") if the byte is not one of the options."]
+                #[inline]
                 $access const fn from_bytes(value: &[u8], idx: usize) -> crate::error::Result<Self> {
                     if value.len() != crate::CFI_LENGTH {
                         return Err(crate::error::Error::InvalidLength);
@@ -71,6 +76,7 @@ macro_rules! impl_attr {
             }
 
             impl crate::Attr for $name {
+                #[inline]
                 fn from_code_byte(value: u8) -> crate::error::Result<Self> {
                     Self::from_byte(value)
                 }
@@ -83,6 +89,7 @@ macro_rules! impl_attr {
     };
 }
 
+/// Generate a new group.
 macro_rules! impl_group {
     {
         $(#[$doc:meta])*
@@ -106,6 +113,7 @@ macro_rules! impl_group {
         impl $name {
             $(
                 $(#[$memdoc])*
+                #[inline]
                 #[must_use]
                 pub const fn $member(&self) -> $value {
                     { self.$member }
@@ -120,6 +128,7 @@ macro_rules! impl_group {
             ///   [`CFI_LENGTH`](crate::CFI_LENGTH) bytes.
             /// - A more specific error if a given attribute/field contained an invalid
             ///   character.
+            #[inline]
             pub const fn from_bytes(src: &[u8]) -> crate::error::Result<Self> {
                 Ok(Self {
                     $(
@@ -137,12 +146,14 @@ macro_rules! impl_group {
                 $(
                     type [<Attr $offset>] = $value;
 
+                    #[inline]
                     fn [<attr $offset>](&self) -> Self::[<Attr $offset>] {
                         self.$member()
                     }
                 )*
             }
 
+            #[inline]
             fn from_cfi_bytes(value: &[u8]) -> crate::error::Result<Self> {
                 if value.len() != crate::CFI_LENGTH {
                     return Err(crate::error::Error::InvalidLength);
@@ -161,6 +172,7 @@ macro_rules! impl_group {
     };
 }
 
+/// Generate a new category.
 macro_rules! impl_category {
     (
         $(#[$doc:meta])*
@@ -186,6 +198,7 @@ macro_rules! impl_category {
             impl $name {
                 $(
                     #[doc = "Whether the group value is [`Self::" $variant "`]."]
+                    #[inline]
                     #[must_use]
                     $access const fn [<is_ $variant:snake>](&self) -> bool {
                         matches!(self, Self::$variant(_))
@@ -199,6 +212,7 @@ macro_rules! impl_category {
                 /// - [`Error::InvalidLength`](crate::Error::InvalidLength) if the byte string is
                 ///   not 6 characters long.
                 /// - A more specific error if a particular character could not be parsed.
+                #[inline]
                 $access const fn from_bytes(value: &[u8]) -> crate::error::Result<Self> {
                     if value.len() != crate::CFI_LENGTH {
                         return Err(crate::Error::InvalidLength);

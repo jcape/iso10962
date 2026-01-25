@@ -1,4 +1,4 @@
-//! Error details
+//! Error details.
 
 use core::result::Result as CoreResult;
 use thiserror::Error as ThisError;

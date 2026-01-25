@@ -1,4 +1,4 @@
-//! Debt Instrument category support
+//! Debt Instrument category support.
 
 use crate::{Form, NotApplicable, macros};
 

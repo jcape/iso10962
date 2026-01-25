@@ -18,7 +18,10 @@ pub use crate::error::{Error, Result};
 /// The length of a CFI code, in bytes.
 pub const CFI_LENGTH: usize = 6;
 
+/// The byte index of the category character.
 const CATEGORY_IDX: usize = 0;
+
+/// The byte index of the group character.
 const GROUP_IDX: usize = 1;
 
 /// A trait implemented by CFI code attributes used to parse a code.
@@ -39,6 +42,7 @@ pub trait AttrPos<const INDEX: usize>: Sized + Attr {
     ///
     /// - [`Error::InvalidLength`] if the length of the byte string is not [`CFI_LENGTH`].
     /// - A more specific error if a given character position contains an invalid value.
+    #[inline]
     fn from_cfi_bytes(value: &[u8]) -> Result<Self> {
         if value.len() != CFI_LENGTH {
             return Err(Error::InvalidLength);
@@ -192,84 +196,98 @@ pub enum Code {
 
 impl Code {
     /// Whether this instance is an equity.
+    #[inline]
     #[must_use]
     pub const fn is_equity(&self) -> bool {
         matches!(self, Self::Equity(_))
     }
 
     /// Whether this instance is a debt instrument.
+    #[inline]
     #[must_use]
     pub const fn is_debt(&self) -> bool {
         matches!(self, Self::Debt(_))
     }
 
     /// Whether this instance is a collective investment vehicle.
+    #[inline]
     #[must_use]
     pub const fn is_civ(&self) -> bool {
         matches!(self, Self::Civ(_))
     }
 
     /// Whether this instance is a entitlement/right.
+    #[inline]
     #[must_use]
     pub const fn is_entitlement(&self) -> bool {
         matches!(self, Self::Rights(_))
     }
 
     /// Whether this instance is a listed option.
+    #[inline]
     #[must_use]
     pub const fn is_listed_option(&self) -> bool {
         matches!(self, Self::ListedOption(_))
     }
 
     /// Whether this instance is a futures contract.
+    #[inline]
     #[must_use]
     pub const fn is_future(&self) -> bool {
         matches!(self, Self::Future(()))
     }
 
     /// Whether this instance is a swap.
+    #[inline]
     #[must_use]
     pub const fn is_swap(&self) -> bool {
         matches!(self, Self::Swap(()))
     }
 
     /// Whether this instance is a non-listed or complex listed option.
+    #[inline]
     #[must_use]
     pub const fn is_unlisted_option(&self) -> bool {
         matches!(self, Self::UnlistedOption(()))
     }
 
     /// Whether this instance is a spot contract.
+    #[inline]
     #[must_use]
     pub const fn is_spot(&self) -> bool {
         matches!(self, Self::Spot(()))
     }
 
     /// Whether this instance is a forward contract.
+    #[inline]
     #[must_use]
     pub const fn is_forward(&self) -> bool {
         matches!(self, Self::Forward(()))
     }
 
     /// Whether this instance is a derivative strategy.
+    #[inline]
     #[must_use]
     pub const fn is_strategy(&self) -> bool {
         matches!(self, Self::Strategy(()))
     }
 
     /// Whether this instance is a financing agreement.
+    #[inline]
     #[must_use]
     pub const fn is_financing(&self) -> bool {
         matches!(self, Self::Financing(()))
     }
 
     /// Whether this instance is a referential instrument.
+    #[inline]
     #[must_use]
     pub const fn is_referential(&self) -> bool {
         matches!(self, Self::Referential(()))
     }
 
     /// Whether this instance does not fit the above categories.
+    #[inline]
     #[must_use]
     pub const fn is_misc(&self) -> bool {
         matches!(self, Self::Misc(()))
@@ -280,6 +298,7 @@ impl Code {
     /// # Errors
     ///
     /// - [`Error::InvalidLength`] if the bytes given are not [`CFI_LENGTH`].
+    #[inline]
     pub const fn from_bytes(src: &[u8]) -> Result<Self> {
         if src.len() != CFI_LENGTH {
             return Err(Error::InvalidLength);
