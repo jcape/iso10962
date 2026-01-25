@@ -7,6 +7,7 @@
 pub mod civ;
 pub mod debt;
 pub mod equity;
+pub mod options;
 pub mod rights;
 
 mod error;
@@ -125,7 +126,7 @@ pub enum Code {
     /// either the privilege to purchase or the privilege to sell the assets specified at a
     /// predetermined price or formula at or within a time in the future. Where a listed option
     /// cannot be classified within this Category, refer to non-listed and complex listed options.
-    ListedOption(()) = b'O',
+    ListedOption(options::Listed) = b'O',
 
     /// `F`: Futures.
     ///
@@ -217,7 +218,7 @@ impl Code {
     /// Whether this instance is a listed option.
     #[must_use]
     pub const fn is_listed_option(&self) -> bool {
-        matches!(self, Self::ListedOption(()))
+        matches!(self, Self::ListedOption(_))
     }
 
     /// Whether this instance is a futures contract.
