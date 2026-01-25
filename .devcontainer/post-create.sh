@@ -2,9 +2,8 @@
 
 ARCH=$(arch)
 
-rustup toolchain install stable
-rustup component add --toolchain stable rustfmt
-rustup toolchain install nightly
+rustup toolchain install 1.87.0 --profile minimal
+rustup toolchain install nightly --profile minimal
 rustup component add --toolchain nightly rustfmt
 
 pushd /tmp >/dev/null
