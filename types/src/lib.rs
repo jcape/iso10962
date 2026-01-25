@@ -6,7 +6,7 @@
 
 pub mod civ;
 pub mod debt;
-pub mod equity;
+pub mod equities;
 pub mod options;
 pub mod rights;
 
@@ -103,7 +103,7 @@ pub enum Code {
     /// `E`: Equities.
     ///
     /// Financial instruments representing an ownership interest in an entity or pool of assets.
-    Equity(equity::Equity) = b'E',
+    Equity(equities::Equity) = b'E',
 
     /// `D`: Debt instruments.
     ///
@@ -305,7 +305,7 @@ impl Code {
         }
 
         match src[CATEGORY_IDX] {
-            b'E' => match equity::Equity::from_bytes(src) {
+            b'E' => match equities::Equity::from_bytes(src) {
                 Ok(value) => Ok(Self::Equity(value)),
                 Err(error) => Err(error),
             },
