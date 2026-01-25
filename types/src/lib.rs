@@ -7,6 +7,7 @@
 pub mod civ;
 pub mod debt;
 pub mod equity;
+pub mod rights;
 
 mod error;
 mod macros;
@@ -116,7 +117,7 @@ pub enum Code {
     ///
     /// Financial instruments providing the holder with the privilege to subscribe to or receive
     /// specific assets on terms specified.
-    Entitlement(()) = b'R',
+    Rights(rights::Rights) = b'R',
 
     /// `O`: Listed options.
     ///
@@ -210,7 +211,7 @@ impl Code {
     /// Whether this instance is a entitlement/right.
     #[must_use]
     pub const fn is_entitlement(&self) -> bool {
-        matches!(self, Self::Entitlement(()))
+        matches!(self, Self::Rights(_))
     }
 
     /// Whether this instance is a listed option.
@@ -296,20 +297,20 @@ impl Code {
 macros::impl_attr! {
     /// Form (negotiability, transmission).
     pub enum Form[5] InvalidForm {
-        /// `B`: Bearer (the owner is not registered in the books of the issuer or of the
+        /// Bearer (the owner is not registered in the books of the issuer or of the
         /// registrar).
         Bearer = b'B', "B";
 
-        /// `R`: Registered (securities are recorded in the name of the owner on the books of the
+        /// Registered (securities are recorded in the name of the owner on the books of the
         /// issuer or the issuer's registrar and can only be transferred to another owner when
         /// endorsed by the registered owner).
         Registered = b'R', "R";
 
-        /// `N`: Bearer/registered (securities are issued in both bearer and registered form but
+        /// Bearer/registered (securities are issued in both bearer and registered form but
         /// with the same identification number).
         BearerRegistered = b'N', "N";
 
-        /// `M`: Others (miscellaneous).
+        /// Others (miscellaneous).
         Other = b'M', "M";
     }
 }

@@ -167,7 +167,7 @@ macro_rules! impl_category {
         $access:vis enum $name:ident {
             $(
                 $(#[$vardoc:meta])*
-                $variant:ident($data:ident) = $value:literal,
+                $variant:ident($data:ident) = $value:literal, $char:literal;
             )*
         }
     ) => {
@@ -177,6 +177,7 @@ macro_rules! impl_category {
             #[repr(u8)]
             $access enum $name {
                 $(
+                    #[doc = " `" $char "`: "]
                     $(#[$vardoc])*
                     $variant($data) = $value,
                 )*

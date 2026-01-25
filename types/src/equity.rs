@@ -5,35 +5,35 @@ use crate::{Form, NotApplicable, macros};
 macros::impl_category! {
     /// Financial instruments representing an ownership interest in an entity or pool of assets.
     pub enum Equity {
-        /// `S`: Common/ordinary shares.
+        /// Common/ordinary shares.
         ///
         /// Holders are typically entitled to vote and receive dividends. In the event of
         /// liquidation, holders of shares usually rank behind the entity's creditors and holders
         /// of preferred/preference shares.
-        Common(Common) = b'S',
+        Common(Common) = b'S', "S";
 
-        /// `P`: Preferred/preference shares.
+        /// Preferred/preference shares.
         ///
         /// Payment of dividends to holders normally takes preference over the payment of dividends
         /// to other classes of shares. In the event of liquidation, preferred/preference shares
         /// normally rank above ordinary shares but behind creditors of the company.
-        Preferred(Preferred) = b'P',
+        Preferred(Preferred) = b'P', "P";
 
-        /// `C`: Common/ordinary convertible shares.
+        /// Common/ordinary convertible shares.
         ///
         /// Shares (common/ordinary) which, at the discretion of the holder, are convertible into
         /// other securities, at a designated rate. The conversion privilege may be perpetual or
         /// limited to a specific period.
-        Convertible(Convertible) = b'C',
+        Convertible(Convertible) = b'C', "C";
 
-        /// `F`: Preferred/preference convertible shares.
+        /// Preferred/preference convertible shares.
         ///
         /// Preferred/preference shares which, at the discretion of the holder, are convertible
         /// into other securities, usually common/ordinary shares, at a designated rate. The
         /// conversion privilege may be perpetual or limited to a specified period.
-        PreferedConvertible(PreferredConvertible) = b'F',
+        PreferedConvertible(PreferredConvertible) = b'F', "F";
 
-        /// `L`: Limited partnership units.
+        /// Limited partnership units.
         ///
         /// A limited partnership is a form of partnership similar to a general partnership, except
         /// that in addition to one or more general partners (GPs), there are one or more limited
@@ -44,26 +44,26 @@ macros::impl_category! {
         /// they have no management authority. The GPs pay the LPs the equivalent of a dividend on
         /// their investment, the nature and extent of which is usually defined in the partnership
         /// agreement.
-        LlpUnit(LlpUnit) = b'L',
+        LlpUnit(LlpUnit) = b'L', "F";
 
-        /// `D`: Depository receipts on equities.
+        /// Depository receipts on equities.
         ///
         /// Depository receipts are securities that facilitate the ownership of securities traded
         /// in other jurisdictions. Depository receipts are widely used in order to allow the
         /// trading of shares in jurisdictions other than the one where the original shares were
         /// issued.
-        DepositoryReceipt(DepositoryReceipt) = b'D',
+        DepositoryReceipt(DepositoryReceipt) = b'D', "D";
 
-        /// `Y`: Structured instruments (participation).
+        /// Structured instruments (participation).
         ///
         /// The construction is generally based on a low exercise price option (LEPO) (base value
         /// less discounted future dividends) which in some cases might be comparable to a direct
         /// investment in the underlying asset(s) or a LEPO combined with other options, which
         /// together provide the desired disbursement profile.
-        Structured(Structured) = b'Y',
+        Structured(Structured) = b'Y', "Y";
 
-        /// `M`: Others (miscelaneous).
-        Other(Other) = b'M',
+        /// Others (miscelaneous).
+        Other(Other) = b'M', "M";
     }
 }
 
@@ -74,15 +74,11 @@ macros::impl_group! {
     /// holders of shares usually rank behind the entity's creditors and holders of
     /// preferred/preference shares.
     pub struct Common {
-        /// Voting.
-        ///
-        /// Each share has one vote.
+        /// Voting right (indicates the kind of voting power conferred to the shareholder).
         pub voting_right: VotingRight, 1;
 
-        /// Ownership/transfer/sales restrictions.
-        ///
-        /// The ownership or transfer of the security is subject to special conditions including
-        /// country-specific restrictions.
+        /// Ownership/transfer/sales restrictions (the ownership or transfer of the security is
+        /// subject to special conditions including country-specific restrictions).
         pub ownership: Ownership, 2;
 
         /// Payment status.
@@ -100,19 +96,13 @@ macros::impl_group! {
     /// other classes of shares. In the event of liquidation, preferred/preference shares normally
     /// rank above ordinary shares but behind creditors of the company.
     pub struct Preferred {
-        /// Voting right.
-        ///
-        /// Indicates the kind of voting power conferred to the shareholder.
+        /// Voting right (indicates the kind of voting power conferred to the shareholder).
         pub voting_right: VotingRight, 1;
 
-        /// Redemption.
-        ///
-        /// Indicates the retirement provisions made for the shares.
+        /// Redemption (indicates the retirement provisions made for the shares).
         pub redemption: Redemption, 2;
 
-        /// Income.
-        ///
-        /// Indicates the kind of dividend income the shareholders are entitled to.
+        /// Income (indicates the kind of dividend income the shareholders are entitled to).
         pub income: Income, 3;
 
         /// Form (negotiability, transmission).
@@ -127,15 +117,11 @@ macros::impl_group! {
     /// securities, at a designated rate. The conversion privilege may be perpetual or limited to a
     /// specific period.
     pub struct Convertible {
-        /// Voting right.
-        ///
-        /// Indicates the kind of voting power conferred to the shareholder.
+        /// Voting right (indicates the kind of voting power conferred to the shareholder).
         pub voting_right: VotingRight, 1;
 
-        /// Ownership/transfer/sales restrictions.
-        ///
-        /// The ownership or transfer of the security is subject to special conditions including
-        /// country-specific restrictions.
+        /// Ownership/transfer/sales restrictions (the ownership or transfer of the security is
+        /// subject to special conditions including country-specific restrictions).
         pub ownership: Ownership, 2;
 
         /// Payment status.
@@ -153,19 +139,13 @@ macros::impl_group! {
     /// other securities, usually common/ordinary shares, at a designated rate. The conversion
     /// privilege may be perpetual or limited to a specified period.
     pub struct PreferredConvertible {
-        /// Voting right.
-        ///
-        /// Indicates the kind of voting power conferred to the shareholder.
+        /// Voting right (indicates the kind of voting power conferred to the shareholder).
         pub voting_right: VotingRight, 1;
 
-        /// Redemption.
-        ///
-        /// Indicates the retirement provisions made for the shares.
+        /// Redemption (indicates the retirement provisions made for the shares).
         pub redemption: Redemption, 2;
 
-        /// Income.
-        ///
-        /// Indicates the kind of dividend income the shareholders are entitled to.
+        /// Income (indicates the kind of dividend income the shareholders are entitled to).
         pub income: Income, 3;
 
         /// Form (negotiability, transmission).
@@ -185,15 +165,11 @@ macros::impl_group! {
     /// have no management authority. The GPs pay the LPs the equivalent of a dividend on their
     /// investment, the nature and extent of which is usually defined in the partnership agreement.
     pub struct LlpUnit {
-        /// Voting right.
-        ///
-        /// Indicates the kind of voting power conferred to the shareholder.
+        /// Voting right (indicates the kind of voting power conferred to the shareholder).
         pub voting_right: VotingRight, 1;
 
-        /// Ownership/transfer/sales restrictions.
-        ///
-        /// The ownership or transfer of the security is subject to special conditions including
-        /// country-specific restrictions.
+        /// Ownership/transfer/sales restrictions (the ownership or transfer of the security is
+        /// subject to special conditions including country-specific restrictions).
         pub ownership: Ownership, 2;
 
         /// Payment status.
@@ -211,9 +187,8 @@ macros::impl_group! {
     /// jurisdictions. Depository receipts are widely used in order to allow the trading of shares in
     /// jurisdictions other than the one where the original shares were issued.
     pub struct DepositoryReceipt {
-        /// Instrument dependency.
-        ///
-        /// Represents the ownership of an instrument provided in this table.
+        /// Instrument dependency (represents the ownership of an instrument provided in this
+        /// table).
         pub dependency: Dependency, 1;
 
         /// Redemption/conversion of the underlying assets.
@@ -238,20 +213,14 @@ macros::impl_group! {
         /// Type.
         pub kind: Kind, 1;
 
-        /// Distribution.
-        ///
-        /// Indicates the cash distribution provided by the structured instrument.
+        /// Distribution (indicates the cash distribution provided by the structured instrument).
         pub distribution: Distribution, 2;
 
-        /// Repayment.
-        ///
-        /// Indicates the repayment form provided by the structured instrument.
+        /// Repayment (indicates the repayment form provided by the structured instrument).
         pub repayment: Repayment, 3;
 
-        /// Underlying assets.
-        ///
-        /// Indicates the type of underlying assets in which the structured instrument
-        /// participates.
+        /// Underlying assets (indicates the type of underlying assets in which the structured
+        /// instrument participates).
         pub underlying: Underlying, 4;
     }
 }
@@ -276,26 +245,20 @@ macros::impl_group! {
 }
 
 macros::impl_attr! {
-    /// Voting right (indicates the kind of voting power conferred to the shareholder).
+    /// Voting right.
+    ///
+    /// Indicates the kind of voting power conferred to the shareholder.
     pub enum VotingRight[2] InvalidVotingRight {
-        /// Voting.
-        ///
-        /// Each share has one vote.
+        /// Voting (each share has one vote).
         Voting = b'V', "V";
 
-        /// Non-voting.
-        ///
-        /// The shareholder has no voting right.
+        /// Non-voting (the shareholder has no voting right).
         NonVoting = b'N', "N";
 
-        /// Restricted voting.
-        ///
-        /// The shareholder may be entitled to less than one vote per share.
+        /// Restricted voting (the shareholder may be entitled to less than one vote per share).
         Restricted = b'R', "R";
 
-        /// Enhanced voting.
-        ///
-        /// The shareholder is entitled to more than one vote per share.
+        /// Enhanced voting (the shareholder is entitled to more than one vote per share).
         Enhanced = b'E', "E";
     }
 }
@@ -329,7 +292,9 @@ macros::impl_attr! {
 }
 
 macros::impl_attr! {
-    /// Redemption (indicates the retirement provisions made for the shares).
+    /// Redemption.
+    ///
+    /// Indicates the retirement provisions made for the shares.
     pub enum Redemption[3] InvalidRedemption {
         /// Redeemable.
         ///
@@ -523,9 +488,13 @@ macros::impl_attr! {
 }
 
 macros::impl_attr! {
-    /// Distribution (indicates the cash distribution provided by the structured instrument).
+    /// Distribution.
+    ///
+    /// Indicates the cash distribution provided by the structured instrument.
     pub enum Distribution[3] InvalidDistribution {
-        /// Dividend payments (depending on strategy of the structured instrument).
+        /// Dividend payments.
+        ///
+        /// This depends on strategy of the structured instrument.
         Dividend = b'D', "D";
         /// No payments.
         None = b'Y', "Y";
@@ -535,7 +504,9 @@ macros::impl_attr! {
 }
 
 macros::impl_attr! {
-    /// Repayment (indicates the repayment form provided by the structured instrument).
+    /// Repayment.
+    ///
+    /// Indicates the repayment form provided by the structured instrument.
     pub enum Repayment[4] InvalidRepayment {
         /// Cash repayment.
         Cash = b'F', "F";
@@ -552,8 +523,9 @@ macros::impl_attr! {
 }
 
 macros::impl_attr! {
-    /// Underlying assets (indicates the type of underlying assets in which the structured
-    /// instrument participates).
+    /// Underlying assets.
+    ///
+    /// Indicates the type of underlying assets in which the structured instrument participates.
     pub enum Underlying[5] InvalidAsset {
         /// Baskets.
         ///

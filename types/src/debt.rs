@@ -6,39 +6,39 @@ macros::impl_category! {
     /// Financial instruments evidencing monies owed by the issuer to the holder on terms as
     /// specified.
     pub enum Debt {
-        /// `B`: Bonds.
+        /// Bonds.
         ///
         /// Any interest-bearing or discounted security that normally obliges the issuer to pay the
         /// bondholder a contracted sum of money and to repay the principal amount of the debt.
-        Bond(Bond) = b'B',
+        Bond(Bond) = b'B', "B";
 
-        /// `C`: Convertible bonds.
+        /// Convertible bonds.
         ///
         /// A bond that can be converted into other securities.
-        Convertible(Convertible) = b'C',
+        Convertible(Convertible) = b'C', "C";
 
-        /// `W`: Bonds with warrants attached.
+        /// Bonds with warrants attached.
         ///
         /// A bond that is issued together with one or more warrant(s) attached as part of the
         /// offer, the warrant(s) granting the holder the right to purchase a designated security,
         /// often the common stock of the issuer of the debt, at a specified price.
-        WarrantAttached(WarrantAttached) = b'W',
+        WarrantAttached(WarrantAttached) = b'W', "W";
 
-        /// `T`: Medium-term notes.
+        /// Medium-term notes.
         ///
         /// Negotiable debt instruments offered under a program agreement through one or more
         /// dealers upon request of the issuer. The program defines the terms and conditions of the
         /// notes.
-        MediumTerm(MediumTerm) = b'T',
+        MediumTerm(MediumTerm) = b'T', "T";
 
-        /// `Y`: Money market instruments.
+        /// Money market instruments.
         ///
         /// Financial instruments designated at issuance as such with a short-term life, for
         /// instance treasury bills and commercial paper including municipal money market
         /// instruments.
-        MoneyMarket(MoneyMarket) = b'Y',
+        MoneyMarket(MoneyMarket) = b'Y', "Y";
 
-        /// `S`: Structured products (with capital protection).
+        /// Structured products (with capital protection).
         ///
         /// Capital protected structured instruments offer investors exposure to chosen underlying
         /// assets using various approaches and offering a large variety of asymmetric pay-off
@@ -52,9 +52,9 @@ macros::impl_category! {
         /// guarantee level at maturity) and the notional amount is used for structuring the
         /// performance component with options which deliver the agreed pay-off profile of the
         /// structured instrument.
-        ProtectedStructured(ProtectedStructured) = b'S',
+        ProtectedStructured(ProtectedStructured) = b'S', "S";
 
-        /// `E`: Structured products (without capital protection).
+        /// Structured products (without capital protection).
         ///
         /// A structured instrument without capital protection is a short-term note linked to an
         /// underlying stock. The security offers a steady stream of income due to the payment of a
@@ -70,9 +70,9 @@ macros::impl_category! {
         /// discount to the underlying asset can apply. A coupon is paid out regardless of the
         /// performance of the underlying asset, provided that no credit event by the reference
         /// entity has occurred.
-        UnprotectedStructured(UnprotectedStructured) = b'E',
+        UnprotectedStructured(UnprotectedStructured) = b'E', "E";
 
-        /// `G`: Mortgage-backed securities (MBS).
+        /// Mortgage-backed securities (MBS).
         ///
         /// Mortgage-backed securities are debt obligations that represent claims to the cash flows
         /// from pools of mortgage loans, most commonly on residential property. Mortgage loans are
@@ -80,37 +80,39 @@ macros::impl_category! {
         /// pools by a governmental, quasi-governmental or private entity. The entity then issues
         /// securities that represent claims on the principal and interest payments made by
         /// borrowers on the loans in the pool, a process known as securitization.
-        MortgageBacked(MortgageBacked) = b'G',
+        MortgageBacked(MortgageBacked) = b'G', "G";
 
-        /// `A`: Asset-backed securities (ABS).
+        /// Asset-backed securities (ABS).
         ///
         /// Debt instruments backed by receivables other than those arising out of real estate,
         /// loans or mortgages.
-        AssetBacked(AssetBacked) = b'A',
+        AssetBacked(AssetBacked) = b'A', "A";
 
-        /// `N`: Municipal bonds.
+        /// Municipal bonds.
         ///
         /// Bond issued by a state, provincial, city or local government excluding municipal money
         /// market securities, which shall be classified as debt, money market instruments (see
         /// money market instruments).
-        Municipal(Municipal) = b'N',
+        Municipal(Municipal) = b'N', "N";
 
-        /// `D`: Depository receipts on debt instruments.
+        /// Depository receipts on debt instruments.
         ///
         /// Depository receipts are securities that facilitate the ownership of instruments traded
         /// in other jurisdictions. Depository receipts are widely used in order to allow the
         /// trading of debt instruments in jurisdictions other than the one where the original debt
         /// instruments were issued.
-        Depository(Depository) = b'D',
+        Depository(Depository) = b'D', "D";
 
-        /// `M`: Others (miscellaneous).
+        /// Others (miscellaneous).
         ///
         /// Debt instruments that do not fit into any of the above Groups.
-        Other(Other) = b'M',
+        Other(Other) = b'M', "M";
     }
 }
 
 macros::impl_group! {
+    /// Bonds.
+    ///
     /// Any interest-bearing or discounted security that normally obliges the issuer to pay the
     /// bondholder a contracted sum of money and to repay the principal amount of the debt.
     pub struct Bond {
@@ -134,6 +136,8 @@ macros::impl_group! {
 }
 
 macros::impl_group! {
+    /// Convertible bonds.
+    ///
     /// A bond that can be converted into other securities.
     pub struct Convertible {
         /// Type of interest.

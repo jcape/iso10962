@@ -14,19 +14,19 @@ macros::impl_category! {
         /// An investment vehicle that is made up of a pool of funds collected from many investors
         /// for the purpose of investing in securities such as stocks, bonds, money market
         /// instruments and similar assets.
-        Standard(Standard) = b'I',
+        Standard(Standard) = b'I', "I";
 
         /// Hedge funds.
         ///
         /// Type of investment fund which pursues a total return and is usually open to qualified
         /// investors only.
-        Hedge(Hedge) = b'H',
+        Hedge(Hedge) = b'H', "H";
 
         /// Real estate investment trust (REITs).
         ///
         /// A REIT is a real estate company that offers shares/units to the public and invests in
         /// real estate directly, either through properties or mortgages.
-        Reit(Reit) = b'B',
+        Reit(Reit) = b'B', "R";
 
         /// Exchange traded funds (ETFs).
         ///
@@ -34,32 +34,32 @@ macros::impl_category! {
         /// assets such as stocks, commodities or bonds, and trades close to its net asset value
         /// over the course of the trading day. Most ETFs track an index, such as a stock, bond or
         /// commodity. index.
-        Etf(Etf) = b'E',
+        Etf(Etf) = b'E', "E";
 
         /// Pension funds.
         ///
         /// A pension fund is run by a financial intermediary for the company and its employees.
         /// The pension fund is a common asset pool meant to generate stable growth over the long
         /// term.
-        Pension(Pension) = b'S',
+        Pension(Pension) = b'S', "S";
 
         /// Funds of funds.
         ///
         /// A fund of funds is a CIV that invests directly in other investment funds rather than
         /// investing in stocks, bonds or other securities.
-        FundOfFunds(FundOfFunds) = b'F',
+        FundOfFunds(FundOfFunds) = b'F', "F";
 
         /// Private equity funds.
         ///
         /// A private equity fund is normally structured as a limited partnership or a limited
         /// liability company (investors are limited partners) managed by a GP.
-        PrivateEquity(PrivateEquity) = b'P',
+        PrivateEquity(PrivateEquity) = b'P', "P";
 
         /// Others (miscellaneous).
         ///
         /// CIVs which do not fit into any of the Groups described between standard (vanilla)
         /// investment funds/mutual funds and private equity funds.
-        Other(Other) = b'M',
+        Other(Other) = b'M', "M";
     }
 }
 
