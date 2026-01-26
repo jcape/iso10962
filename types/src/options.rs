@@ -1,6 +1,6 @@
 //! Options (listed and unlisted).
 
-use crate::{NotApplicable, macros};
+use crate::{NotApplicable, Standardized, macros};
 
 macros::impl_category! {
     /// Listed options.
@@ -176,21 +176,5 @@ macros::impl_attr! {
         /// Elect at exercise (the method of delivery of the underlying instrument when the option
         /// is exercised shall be determined at the time of exercise).
         ElectAtExercise = b'E', "E";
-    }
-}
-
-macros::impl_attr! {
-    /// Standardized/non-standardized.
-    ///
-    /// Indicates whether the terms of the contract are standardized or not.
-    pub enum Standardized[5] InvalidStandardized {
-        /// Standardized (the underlying instruments, exercise price, expiration date and contract
-        /// size of the options are standardized; these options are traded on special option
-        /// exchanges).
-        Standardized = b'S', "S";
-
-        /// Non-standardized (options traded on option exchanges which have non-standard delivery
-        /// or expiry terms).
-        NonStandardized = b'N', "N";
     }
 }
