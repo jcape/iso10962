@@ -4,15 +4,18 @@
 -->[![Docs.rs][docs-image]][docs-link]<!--
 -->![MSRV 1.87.0][msrv-image]
 
-This crate provides `no-std`, `no-alloc` compatible data structures for use handling ISO 10962 Classification of Financial Instruments. They are built as a series of nested Rust enumerations:
+This crate provides `no-std`, `no-alloc` compatible data structures for use handling ISO 10962 Classification of Financial Instruments. CFI codes themselves are 6 consecutive ASCII characters in a row. In this crate, they are built as a series of nested Rust enumerations.
 
-- [`Code`] is the top-level enum of CFI categories.
-  - [`equities::Equity`] is a second-level enum of CFI groups for equities.
-    - [`equities::Common`] is the collection of attributes associated with common stock, including:
-      - [`equities::VotingRight`] describes the voting rights for stocks (and is an attribute of common shares)
-      - [`equities::Ownership`] describes the ownership a given stock represents.
-      - [`equities::PaymentStatus`] describes the payment status of a share.
-      - [`Form`] describes the form of the share.
+For example, the code for a standard equity (e.g. `AAPL`) would use a code `ESVUFR` to identify the characteristics of the stock:
+
+| | Char | Rust Type |
+| - | - | - |
+| Category | `E` | [`Code::Equity`](crate::Code::Equity) |
+| Group | `S` | [`Equity::Common`](crate::equities::Equity::Common) |
+| Attr 1 | `V` | [`VotringRight::Voting`](crate::equities::VotingRight) |
+| Attr 2 | `U` | [`Ownership::Free`](crate::equities::Ownership) |
+| Attr 3 | `F` | [`PaymentStatus::Fully`](crate::equities::PaymentStatus) |
+| Attr 4 | `R` | [`Form::Registered`](crate::Form::Registered) |
 
 [crate-image]: https://img.shields.io/crates/v/iso10962-types.svg?style=for-the-badge
 [crate-link]: https://crates.io/crates/iso10962-types/0.3.2

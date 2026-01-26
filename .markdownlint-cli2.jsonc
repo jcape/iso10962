@@ -5,6 +5,9 @@
             "siblings_only": true
         }
     },
+    "files": [
+        "**/*.md"
+    ],
     "gitignore": true,
     "ignores": [
         "CODE_OF_CONDUCT.md"
