@@ -7,7 +7,7 @@ macros::impl_category! {
     ///
     /// Financial instruments providing the holder with the privilege to subscribe to or receive
     /// specific assets on terms specified.
-    pub enum Rights {
+    pub enum Right {
         /// Allotment (bonus) rights.
         ///
         /// Privileges allotted to existing security holders, entitling them to receive new
@@ -215,7 +215,7 @@ macros::impl_group! {
 
 macros::impl_attr! {
     /// Assets (indicates the type of assets that the rights holder is entitled to acquire).
-    pub enum Assets[2] InvalidAsset {
+    pub enum Assets[2] {
         /// Common/ordinary shares.
         Common = b'S', "S";
 
@@ -244,7 +244,7 @@ macros::impl_attr! {
     ///
     /// Indicates whether the warrant is issued by the issuer of the underlying instrument or by a
     /// third party.
-    pub enum Kind[3] InvalidKind {
+    pub enum Kind[3] {
         /// Traditional warrants.
         ///
         /// Issued by the issuer of the underlying instrument.
@@ -271,7 +271,7 @@ macros::impl_attr! {
     ///
     /// Indicates whether the warrant entitles the holder to acquire assets at specified terms or
     /// to acquire cash in exchange for specific underlying assets.
-    pub enum CallPut[4] InvalidCallPut {
+    pub enum CallPut[4] {
         /// Call.
         ///
         /// In most cases, the warrant entitles the holder to acquire specific underlying assets
@@ -292,7 +292,7 @@ macros::impl_attr! {
 
 macros::impl_attr! {
     /// Exercise option style.
-    pub enum ExerciseStyle[5] InvalidExerciseStyle {
+    pub enum ExerciseStyle[5] {
         /// European.
         ///
         /// Warrant that can only be exercised for a short, specified period of time just prior to
@@ -319,7 +319,7 @@ macros::impl_attr! {
     /// Underlying assets.
     ///
     /// Indicates the type of underlying assets that the warrant holder is entitled to acquire.
-    pub enum FutureAsset[2] InvalidAsset {
+    pub enum FutureAsset[2] {
         /// Baskets (the warrant holder is entitled to acquire a package or group of assets).
         Basket = b'B', "B";
 
@@ -351,7 +351,7 @@ macros::impl_attr! {
     ///
     /// Indicates whether the instrument barrier depends on the underlying level or on the
     /// instrument trading price level.
-    pub enum Barrier[3] InvalidBarrier {
+    pub enum Barrier[3] {
         /// Barrier underlying based (the instrument immediately expires if the barrier underlying
         /// level is breached during product lifetime).
         Underlying = b'T', "T";
@@ -370,7 +370,7 @@ macros::impl_attr! {
     ///
     /// Indicates whether the instrument entitles the holder to acquire assets at specified terms
     /// or to acquire cash in exchange for specific underlying assets.
-    pub enum LongShort[4] InvalidLongShort {
+    pub enum LongShort[4] {
         /// Long (in most cases, the instrument entitles the holder to acquire specific underlying
         /// assets during a specified period at a specified price).
         Long = b'C', "C";
@@ -386,7 +386,7 @@ macros::impl_attr! {
 
 macros::impl_attr! {
     /// Instrument dependency.
-    pub enum Dependency[2] InvalidDependency {
+    pub enum Dependency[2] {
         /// Allotment (bonus) rights.
         Allotment = b'A', "A";
 

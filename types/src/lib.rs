@@ -10,6 +10,7 @@ pub mod equities;
 pub mod futures;
 pub mod options;
 pub mod rights;
+pub mod swaps;
 
 mod error;
 mod macros;
@@ -123,7 +124,7 @@ pub enum Code {
     ///
     /// Financial instruments providing the holder with the privilege to subscribe to or receive
     /// specific assets on terms specified.
-    Rights(rights::Rights) = b'R',
+    Right(rights::Right) = b'R',
 
     /// `O`: Listed options.
     ///
@@ -138,14 +139,14 @@ pub enum Code {
     /// Contracts, listed on an exchange or regulated market, which obligate the buyer to receive
     /// and the seller to deliver in the future the assets specified at an agreed price. This
     /// includes forwards on regulated markets.
-    Future(()) = b'F',
+    Future(futures::Future) = b'F',
 
     /// `S`: Swaps.
     ///
     /// A swap is an agreement or contract where two counterparties agree to exchange periodic
     /// streams of cash flows with each other. Swaps can be executed with a variety of asset
     /// classes, as listed below.
-    Swap(()) = b'S',
+    Swap(swaps::Swap) = b'S',
 
     /// `H`: Non-listed and complex listed options.
     ///
@@ -221,7 +222,7 @@ impl Code {
     #[inline]
     #[must_use]
     pub const fn is_entitlement(&self) -> bool {
-        matches!(self, Self::Rights(_))
+        matches!(self, Self::Right(_))
     }
 
     /// Whether this instance is a listed option.
@@ -235,14 +236,14 @@ impl Code {
     #[inline]
     #[must_use]
     pub const fn is_future(&self) -> bool {
-        matches!(self, Self::Future(()))
+        matches!(self, Self::Future(_))
     }
 
     /// Whether this instance is a swap.
     #[inline]
     #[must_use]
     pub const fn is_swap(&self) -> bool {
-        matches!(self, Self::Swap(()))
+        matches!(self, Self::Swap(_))
     }
 
     /// Whether this instance is a non-listed or complex listed option.
@@ -317,7 +318,7 @@ impl Code {
 
 macros::impl_attr! {
     /// Form (negotiability, transmission).
-    pub enum Form[5] InvalidForm {
+    pub enum Form[5] {
         /// Bearer (the owner is not registered in the books of the issuer or of the
         /// registrar).
         Bearer = b'B', "B";
@@ -338,7 +339,7 @@ macros::impl_attr! {
 
 macros::impl_attr! {
     /// Not applicable/undefined.
-    pub enum NotApplicable[2, 3, 4, 5] InvalidUnassigned {}
+    pub enum NotApplicable[2, 3, 4, 5] {}
 }
 
 #[cfg(test)]
@@ -360,7 +361,7 @@ macros::impl_attr! {
     /// Standardized/non-standardized.
     ///
     /// Indicates whether the terms of the contract are standardized or not.
-    pub enum Standardized[4, 5] InvalidStandardized {
+    pub enum Standardized[4, 5] {
         /// Standardized (the underlying instruments, exercise price, expiration date and contract
         /// size of the options are standardized; these options are traded on special option
         /// exchanges).

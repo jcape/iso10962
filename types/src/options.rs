@@ -102,7 +102,7 @@ macros::impl_group! {
 
 macros::impl_attr! {
     /// Exercise option style.
-    pub enum ExerciseStyle[2] InvalidExerciseStyle {
+    pub enum ExerciseStyle[2] {
         /// European.
         European = b'E', "E";
 
@@ -118,7 +118,7 @@ macros::impl_attr! {
     /// Underlying assets.
     ///
     /// Indicates the type of underlying assets that the option holder is entitled to acquire.
-    pub enum Underlying[3] InvalidUnderlying {
+    pub enum Underlying[3] {
         /// Baskets.
         Basket = b'B', "B";
 
@@ -159,7 +159,7 @@ macros::impl_attr! {
     ///
     /// Indicates whether the settlement of the option, when exercised, is made in cash or whether
     /// the underlying instruments are delivered.
-    pub enum Delivery[4] InvalidDelivery {
+    pub enum Delivery[4] {
         /// Physical (the meeting of a settlement obligation under a derivative contract through
         /// the receipt or delivery of the actual underlying instrument(s) instead of through
         /// cash settlement).

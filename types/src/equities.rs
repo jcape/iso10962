@@ -248,7 +248,7 @@ macros::impl_attr! {
     /// Voting right.
     ///
     /// Indicates the kind of voting power conferred to the shareholder.
-    pub enum VotingRight[2] InvalidVotingRight {
+    pub enum VotingRight[2] {
         /// Voting (each share has one vote).
         Voting = b'V', "V";
 
@@ -268,7 +268,7 @@ macros::impl_attr! {
     ///
     /// The ownership or transfer of the security is subject to special conditions including
     /// country-specific restrictions.
-    pub enum Ownership[3] InvalidOwnership {
+    pub enum Ownership[3] {
         /// Restrictions.
         Restricted = b'T', "T";
 
@@ -279,7 +279,7 @@ macros::impl_attr! {
 
 macros::impl_attr! {
     /// The payment status.
-    pub enum PaymentStatus[4] InvalidPaymentStatus {
+    pub enum PaymentStatus[4] {
         /// Fully paid.
         Fully = b'F', "F";
 
@@ -295,7 +295,7 @@ macros::impl_attr! {
     /// Redemption.
     ///
     /// Indicates the retirement provisions made for the shares.
-    pub enum Redemption[3] InvalidRedemption {
+    pub enum Redemption[3] {
         /// Redeemable.
         ///
         /// The shares may be redeemed at the option of the issuer and/or of the shareholder.
@@ -341,7 +341,7 @@ macros::impl_attr! {
     /// Income.
     ///
     /// Indicates the kind of dividend income the shareholders are entitled to.
-    pub enum Income[4] InvalidIncome {
+    pub enum Income[4] {
         /// Fixed rate income.
         ///
         /// The shareholder periodically receives a stated income.
@@ -390,7 +390,7 @@ macros::impl_attr! {
     /// Instrument dependency.
     ///
     /// Represents the ownership of an instrument provided in this table.
-    pub enum Dependency[2] InvalidDependency {
+    pub enum Dependency[2] {
         /// Common/ordinary shares.
         Common = b'S', "S";
 
@@ -419,7 +419,7 @@ macros::impl_attr! {
     /// For common/ordinary shares and limited partnership units, only the values `N`
     /// ([`Perpetual`](RedemptionConversion::Perpetual)) `X` (not
     /// applicable/undefined) may be used. All values apply for other underlying instruments.
-    pub enum RedemptionConversion[3] InvalidRedemptionConversion {
+    pub enum RedemptionConversion[3] {
         /// Redeemable.
         Redeemable = b'R', "R";
 
@@ -436,7 +436,7 @@ macros::impl_attr! {
 
 macros::impl_attr! {
     /// The structured instrument type.
-    pub enum Kind[2] InvalidStructuredKind {
+    pub enum Kind[2] {
         /// Tracker certificate.
         ///
         /// Participation in development of the underlying asset(s); reflects underlying price
@@ -491,7 +491,7 @@ macros::impl_attr! {
     /// Distribution.
     ///
     /// Indicates the cash distribution provided by the structured instrument.
-    pub enum Distribution[3] InvalidDistribution {
+    pub enum Distribution[3] {
         /// Dividend payments.
         ///
         /// This depends on strategy of the structured instrument.
@@ -507,7 +507,7 @@ macros::impl_attr! {
     /// Repayment.
     ///
     /// Indicates the repayment form provided by the structured instrument.
-    pub enum Repayment[4] InvalidRepayment {
+    pub enum Repayment[4] {
         /// Cash repayment.
         Cash = b'F', "F";
 
@@ -526,7 +526,7 @@ macros::impl_attr! {
     /// Underlying assets.
     ///
     /// Indicates the type of underlying assets in which the structured instrument participates.
-    pub enum Underlying[5] InvalidAsset {
+    pub enum Underlying[5] {
         /// Baskets.
         ///
         /// Group of securities that have been put together for a specific investment purpose.

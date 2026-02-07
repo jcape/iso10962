@@ -4,7 +4,7 @@
 macro_rules! impl_attr {
     (
         $(#[$doc:meta])*
-        $access:vis enum $name:ident[$($idx:literal),+] $error:ident {
+        $access:vis enum $name:ident[$($idx:literal),+] {
             $(
                 $(#[$vardoc:meta])*
                 $variant:ident = $value:literal, $char:literal;
@@ -47,14 +47,14 @@ macro_rules! impl_attr {
                 ///
                 /// # Errors
                 ///
-                #[doc = " - [`Error::" $error "`](crate::Error::" $error ") if the byte is not one of the options."]
+                /// - [`Error::InvalidAttribute`] if the byte is not one of the options.
                 #[inline]
                 $access const fn from_byte(value: u8) -> crate::error::Result<Self> {
                     match value {
                         $(
                             $value => Ok(Self::$variant),
                         )*
-                        other => Err(crate::error::Error::$error(other as char)),
+                        other => Err(crate::error::Error::InvalidAttribute(0, other as char)),
                     }
                 }
 
@@ -64,14 +64,19 @@ macro_rules! impl_attr {
                 ///
                 /// - [`Error::InvalidLength`](crate::Error::InvalidLength) if the byte slice is
                 ///   not [`CFI_LENGTH`](crate::CFI_LENGTH) bytes.
-                #[doc = " - [`Error::" $error "`](crate::Error::" $error ") if the byte is not one of the options."]
+                /// - [`Error::InvalidAttribute`] if the byte is not one of the options.
                 #[inline]
                 $access const fn from_bytes(value: &[u8], idx: usize) -> crate::error::Result<Self> {
                     if value.len() != crate::CFI_LENGTH {
                         return Err(crate::error::Error::InvalidLength);
                     }
 
-                    Self::from_byte(value[idx])
+                    match Self::from_byte(value[idx]) {
+                        Err(crate::error::Error::InvalidAttribute(_, val)) => {
+                            Err(crate::error::Error::InvalidAttribute(idx, val))
+                        },
+                        other => other,
+                    }
                 }
             }
 

@@ -69,7 +69,7 @@ macros::impl_attr! {
     ///
     /// Indicates the type of underlying assets that the futures buyer receives, and that the
     /// seller delivers.
-    pub enum UnderlyingFinancial[2] InvalidUnderlying {
+    pub enum UnderlyingFinancial[2] {
         /// Baskets.
         Baskets = b'B', "B";
 
@@ -110,7 +110,7 @@ macros::impl_attr! {
     ///
     /// Indicates whether the settlement of the future is made in cash or whether the underlying
     /// instruments are delivered.
-    pub enum Delivery[3] InvalidDelivery {
+    pub enum Delivery[3] {
         /// Physical.
         Physical = b'P', "P";
 
@@ -124,7 +124,7 @@ macros::impl_attr! {
 
 macros::impl_attr! {
     /// Underlying assets.
-    pub enum UnderlyingCommodity[2] InvalidUnderlying {
+    pub enum UnderlyingCommodity[2] {
         /// Extraction resources (metals, precious metals, coal, oil, gas).
         Extraction = b'E', "E";
 

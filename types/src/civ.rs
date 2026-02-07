@@ -266,7 +266,7 @@ macros::impl_attr! {
     ///
     /// Indicates whether units are traded or whether funds continually stand ready to sell new
     /// units and redeem the outstanding units on demand.
-    pub enum ClosedOrOpen[2] InvalidClosedOrOpen {
+    pub enum ClosedOrOpen[2] {
         /// Closed-end.
         ///
         /// Units are sold on either an organized exchange or in the over-the-counter (OTC) market
@@ -288,7 +288,7 @@ macros::impl_attr! {
     /// Distribution policy.
     ///
     /// Indicates the fund's normal distribution policy.
-    pub enum Distribution[3] InvalidDistribution {
+    pub enum Distribution[3] {
         /// Income funds.
         ///
         /// The fund regularly distributes its investment profits.
@@ -310,7 +310,7 @@ macros::impl_attr! {
     /// Assets.
     ///
     /// Indicates the underlying assets in which the fund invests.
-    pub enum Assets[4] InvalidAsset {
+    pub enum Assets[4] {
         /// Real estate.
         RealEstate = b'R', "R";
 
@@ -354,7 +354,7 @@ macros::impl_attr! {
 
 macros::impl_attr! {
     /// Security type and investor restrictions.
-    pub enum KindAndRestrictions[5] InvalidKindAndRestriction {
+    pub enum KindAndRestrictions[5] {
         /// Shares for either retail and/or qualified/institutional/professional investors.
         Shares = b'S', "S";
 
@@ -373,7 +373,7 @@ macros::impl_attr! {
     /// Investment strategy.
     ///
     /// The investment process describes core hedge fund strategy characteristics.
-    pub enum Strategy[2] InvalidStrategy {
+    pub enum Strategy[2] {
         /// Directional.
         ///
         /// The two biggest constituents of directional are macro and commodity trading advisor
@@ -434,7 +434,7 @@ macros::impl_attr! {
 
 macros::impl_attr! {
     /// Security type.
-    pub enum Kind[5] InvalidKind {
+    pub enum Kind[5] {
         /// Shares.
         Shares = b'S', "S";
 
@@ -445,7 +445,7 @@ macros::impl_attr! {
 
 macros::impl_attr! {
     /// Strategy/style.
-    pub enum Style[3] InvalidStyle {
+    pub enum Style[3] {
         /// Balanced/conservative.
         Balanced = b'B', "B";
 
@@ -464,7 +464,7 @@ macros::impl_attr! {
 
 macros::impl_attr! {
     /// Pension type.
-    pub enum PensionKind[4] InvalidKind {
+    pub enum PensionKind[4] {
         /// Defined benefit.
         Benefit = b'R', "R";
 
@@ -480,7 +480,7 @@ macros::impl_attr! {
     /// Type of funds.
     ///
     /// Indicates the type of funds in which the fund invests.
-    pub enum FundsKind[4] InvalidKind {
+    pub enum FundsKind[4] {
         /// Standard (vanilla) investment funds/mutual funds.
         Standard = b'I', "I";
 
