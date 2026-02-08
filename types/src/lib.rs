@@ -154,7 +154,7 @@ pub enum Code {
     /// not captured by the listed options category. An option grants the holder either the
     /// privilege to purchase or the privilege to sell the assets specified at a predetermined
     /// price or formula at or within a time in the future.
-    UnlistedOption(()) = b'H',
+    UnlistedOption(options::Unlisted) = b'H',
 
     /// `I`: Spot.
     ///
@@ -250,7 +250,7 @@ impl Code {
     #[inline]
     #[must_use]
     pub const fn is_unlisted_option(&self) -> bool {
-        matches!(self, Self::UnlistedOption(()))
+        matches!(self, Self::UnlistedOption(_))
     }
 
     /// Whether this instance is a spot contract.
